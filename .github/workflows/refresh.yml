@@ -1,0 +1,23 @@
+name: Daily refresh
+on:
+  schedule:
+    - cron: "15 0 * * *"
+  workflow_dispatch:
+jobs:
+  run-etl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r etl/requirements.txt
+      - env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: make etl
+      - run: |
+          git config user.email "action@github.com"
+          git config user.name  "GitHub Action"
+          git add data web/public/dashboard.json || true
+          git commit -m "data $(date +'%F')" || true
+          git push || true 

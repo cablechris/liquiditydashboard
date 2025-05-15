@@ -1,0 +1,16 @@
+{
+  "date": "2023-05-15",
+  "on_rrp": 75000,
+  "reserves": 2750000,
+  "move": 130,
+  "srf": 10000,
+  "bill_share": 0.65,
+  "tail_bp": 3.5,
+  "status": {
+    "on_rrp": "amber",
+    "reserves": "amber",
+    "move": "amber",
+    "srf": "green",
+    "tail": "amber"
+  }
+} 
