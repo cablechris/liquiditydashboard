@@ -5,7 +5,7 @@ import { ResponsiveContainer, LineChart, Line } from "recharts";
 interface Props {
   title: string;
   value: string | number;
-  status: "green" | "amber" | "red";
+  status: string; // Changed from "green" | "amber" | "red" to accept any string
   data: { value: number }[]; // sparkline data
 }
 
