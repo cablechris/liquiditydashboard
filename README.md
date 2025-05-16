@@ -1,40 +1,72 @@
-# Liquidity Dashboard v0.1
+# USD Liquidity Dashboard
 
-A static, auto-updating website that visualizes the five critical USD-liquidity gauges that historically precede Federal Reserve policy pivots.
+A real-time dashboard tracking critical USD-liquidity gauges that historically precede Federal Reserve policy pivots.
 
-## High-level architecture
+## Features
 
-```
-GitHub repo
-├── etl/               # Python fetch + clean
-├── web/               # Next.js 14 App Router front-end
-└── .github/workflows  # CI: daily ETL + commit
-```
+- **ON-RRP Balance**: Overnight Reverse Repo facility usage with directional delta and days-to-empty calculation
+- **Reserve Balances**: Bank reserves held at the Fed with week-over-week change
+- **MOVE Index**: Treasury market volatility with bullet chart showing gap to floor
+- **SRF Take-up**: Standing Repo Facility usage with 7-day moving average
+- **Treasury Funding Pressure**: Bill auction share and tail pricing metrics
+- **Liquidity Thermometer**: Aggregate view of all metrics' status
 
-## Data sources
+## Project Structure
 
-| Metric        | Endpoint                                             | Freq                           |
-| ------------- | ---------------------------------------------------- | ------------------------------ |
-| ON‑RRP        | FRED `RRPONTSYD`                                     | Daily                          |
-| Reserves      | FRED `WRBWFRBL`                                      | Weekly (latest obs used daily) |
-| MOVE          | HTML scrape ‑ FT.com summary page                    | 15 min delayed                 |
-| SRF           | NY Fed CSV API                                       | Daily                          |
-| Auction table | TreasuryDirect HTML table of 20 most‑recent auctions | Daily                          |
+- `/etl` - Python scripts to fetch data from FRED, FT.com, NY Fed, TreasuryDirect
+- `/web` - Next.js frontend with Tailwind CSS styling
+- `/data` - Historical data storage (parquet format)
+- `/.github/workflows` - GitHub Actions for daily data refresh
 
-## Local development
+## Technical Stack
 
-```bash
-# Install Python dependencies
-pip install -r etl/requirements.txt
+- **Backend**: Python, pandas, requests, BeautifulSoup
+- **Frontend**: Next.js, React, TypeScript, Tailwind CSS
+- **Data Visualization**: Custom SVG charts, sparklines, and bullet charts
+- **Deployment**: Vercel, GitHub Actions
 
-# Run the ETL process
-make etl
+## Installation & Usage
 
-# Install JavaScript dependencies
-cd web && npm install
+### Running locally
 
-# Run the Next.js development server
-npm run dev
-```
+1. Clone the repository
+   ```
+   git clone https://github.com/cablechris/liquiditydashboard.git
+   cd liquiditydashboard
+   ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the dashboard.
+2. Install frontend dependencies and run development server
+   ```
+   cd web
+   npm install
+   npm run dev
+   ```
+
+3. Run ETL script (requires FRED API key)
+   ```
+   cd etl
+   pip install -r requirements.txt
+   FRED_API_KEY=your_api_key python fetch_data.py
+   ```
+
+### Environment Variables
+
+- `FRED_API_KEY`: API key for Federal Reserve Economic Data
+
+## Status Thresholds
+
+The dashboard uses a red/amber/green system based on these thresholds:
+
+- **ON-RRP**: <$50bn (red), <$100bn (amber), >$100bn (green)
+- **Reserves**: <$2.5tn (red), <$3.0tn (amber), >$3.0tn (green)
+- **MOVE**: >140 (red), >120 (amber), <120 (green)
+- **SRF**: >$100bn (red), >$25bn (amber), <$25bn (green)
+- **Treasury Funding**: Bill share >60% AND tails >4bp (red), Bill share >60% OR tails >4bp (amber), otherwise (green)
+
+## Contributing
+
+Contributions welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.

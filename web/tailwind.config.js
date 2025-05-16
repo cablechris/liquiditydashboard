@@ -1,21 +1,24 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
+  content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
   theme: {
     extend: {
       colors: {
-        status: {
-          green: "#16a34a",
-          amber: "#f59e0b",
-          red: "#dc2626",
-        },
-        card: {
-          bg: "#f9fafb",
-          ring: "#e2e8f0",
+        bg:      '#fafafa',        // pale background
+        line:    '#e0e0e0',        // gridlines / borders
+        text:    '#111111',        // main text
+      },
+      keyframes: {
+        pulseFade: {
+          '0%, 100%': { transform: 'scale(1)', opacity: '1' },
+          '50%':      { transform: 'scale(1.15)', opacity: '0.6' },
         },
       },
+      animation: {
+        pulseFade: 'pulseFade 0.7s ease-in-out infinite',
+      },
       fontFamily: {
-        sans: ["Inter", "ui-sans-serif", "system-ui"],
+        sans: ['Inter', 'Helvetica', 'Arial', 'sans-serif'],
       },
     },
   },

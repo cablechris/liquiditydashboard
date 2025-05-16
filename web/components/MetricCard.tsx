@@ -1,54 +1,35 @@
+"use client";
+
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
-// Simple custom sparkline implementation instead of Recharts
-// to avoid the "Super expression must either be null or a function" error
+import Light from "./TrafficLight";
+import Spark from "./Spark";
+import Bullet from "./BulletBar";
+import { fmt } from "@/lib/format";
 
 interface Props {
   title: string;
   value: string | number;
-  status: string;
-  data: { value: number }[]; // sparkline data
+  status: "green" | "amber" | "red";
+  type: "spark" | "bullet";
+  data?: { value: number }[]; // sparkline data
+  subtitle?: string;
+  metricKey?: string;
 }
 
-// Simple sparkline component that doesn't use class inheritance
-const SimpleSparkline = ({ data }: { data: { value: number }[] }) => {
-  if (data.length < 2) return null;
-  
-  // Find min and max for scaling
-  const values = data.map(d => d.value);
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const range = max - min || 1; // Avoid division by zero
-  
-  // Create points for a simple SVG polyline
-  const points = data.map((d, i) => {
-    const x = (i / (data.length - 1)) * 100; // Scale to 0-100%
-    const y = 100 - ((d.value - min) / range) * 100; // Scale to 0-100% and invert (0 is top in SVG)
-    return `${x},${y}`;
-  }).join(' ');
-  
+export default function CardMetric(p: Props) {
   return (
-    <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
-      <polyline
-        points={points}
-        fill="none"
-        stroke="#94a3b8"
-        strokeWidth="2"
-      />
-    </svg>
-  );
-};
-
-export default function MetricCard({ title, value, status, data }: Props) {
-  return (
-    <Card className="transition hover:shadow-lg">
-      <CardContent className="p-3">
-        <h3 className="text-xs text-slate-600 uppercase mb-1">{title}</h3>
-        <div className={`text-2xl font-semibold text-status-${status}`}>{value}</div>
+    <Card className="bg-card-bg ring-1 ring-card-ring rounded-xl shadow-md hover:shadow-lg transition">
+      <CardContent className="p-4">
+        <div className="flex items-center justify-between mb-1">
+          <h3 className="text-[11px] font-semibold text-slate-500 uppercase">{p.title}</h3>
+          <Light status={p.status}/>
+        </div>
+        <div title={typeof p.value==='number'?p.value.toLocaleString('en-US',{style:'currency',currency:'USD'}):''} className={`text-2xl font-bold text-status-${p.status}`}>{typeof p.value==='number'?fmt(p.value):p.value}</div>
+        {p.subtitle&&<p className="text-[10px] text-slate-500 mb-1">{p.subtitle}</p>}
         <div className="h-6">
-          {data.length > 1 && (
-            <SimpleSparkline data={data} />
-          )}
+          {p.type==='spark'&&p.data&&<Spark data={p.data}/>} 
+          {p.type==='bullet'&&typeof p.value==='number'&&<Bullet value={p.value} floor={2_500_000_000_000}/>} 
         </div>
       </CardContent>
     </Card>
