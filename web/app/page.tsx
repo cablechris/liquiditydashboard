@@ -49,7 +49,7 @@ export default function Home() {
           <div className="w-full md:w-2/3 space-y-8">
             <h1 className="text-6xl md:text-7xl font-extrabold leading-tight text-text">
               When does the Fed have to pivot?<br/>
-              <span className="text-indigo-600">Watch the plumbing.</span>
+              <span className="text-indigo-600">Watch the plumbing...</span>
             </h1>
             <div className="bg-gray-50 p-4 rounded-xl shadow-sm">
               <MicroDashStrip />

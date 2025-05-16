@@ -14,7 +14,7 @@ import snap from '@/public/dashboard.json';
 
 // map status name to color hex
 const STATUS_COLOR: Record<string,string> = {
-  green: '#2962ff',
+  green: '#2e7d32',
   amber: '#f57c00',
   red:   '#d32f2f',
 };
