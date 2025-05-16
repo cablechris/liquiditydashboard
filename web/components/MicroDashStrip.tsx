@@ -1,11 +1,11 @@
 'use client';
 import MetricWidget from './MetricWidget';
-import onRrpSeries from '@/public/series/on_rrp.json';
-import reservesSeries from '@/public/series/reserves.json';
-import moveSeries from '@/public/series/move.json';
-import srfSeries from '@/public/series/srf.json';
-import fundingSeries from '@/public/series/funding.json';
-import snap from '@/public/dashboard.json';
+import onRrpSeries from '../public/series/on_rrp.json';
+import reservesSeries from '../public/series/reserves.json';
+import moveSeries from '../public/series/move.json';
+import srfSeries from '../public/series/srf.json';
+import fundingSeries from '../public/series/funding.json';
+import snap from '../public/dashboard.json';
 
 export default function MicroDashStrip() {
   const ORDER: [keyof typeof snap.status, string][] = [

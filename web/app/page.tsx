@@ -1,12 +1,12 @@
 'use client';
 import React from 'react';
 import Image from 'next/image';
-import OnRrpChart from '@/components/charts/OnRrpChart';
-import ReservesChart from '@/components/charts/ReservesChart';
-import MoveChart from '@/components/charts/MoveChart';
-import SrfChart from '@/components/charts/SrfChart';
-import FundingChart from '@/components/charts/FundingChart';
-import MicroDashStrip from '@/components/MicroDashStrip';
+import OnRrpChart from '../components/charts/OnRrpChart';
+import ReservesChart from '../components/charts/ReservesChart';
+import MoveChart from '../components/charts/MoveChart';
+import SrfChart from '../components/charts/SrfChart';
+import FundingChart from '../components/charts/FundingChart';
+import MicroDashStrip from '../components/MicroDashStrip';
 
 export default function Home() {
   // Mock metadata for each chart
