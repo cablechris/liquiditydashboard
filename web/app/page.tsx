@@ -1,6 +1,4 @@
 import React from 'react';
-import Thermometer from "@/components/Thermometer";
-import MoveLine from "@/components/MoveLine";
 import OnRrpChart from '@/components/charts/OnRrpChart';
 import ReservesChart from '@/components/charts/ReservesChart';
 import MoveChart from '@/components/charts/MoveChart';
