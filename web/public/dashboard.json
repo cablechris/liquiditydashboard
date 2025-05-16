@@ -1,20 +1,16 @@
 {
-  "date": "2023-06-15",
-  "on_rrp": 150000,
-  "reserves": 2800000,
+  "date": "2025-05-16",
+  "on_rrp": 120000,
+  "reserves": 2900000,
   "move": 135,
-  "srf": 15000,
-  "bill_share": 0.72,
+  "srf": 18000,
+  "bill_share": 0.73,
   "tail_bp": 3.5,
-  "on_rrp_delta30": -75000,
-  "on_rrp_days_to_zero": 60,
-  "reserves_wow": -150000,
-  "srf_ma7": 12500,
   "status": {
-    "on_rrp": "amber",
+    "on_rrp": "green",
     "reserves": "amber",
     "move": "amber",
     "srf": "green",
     "tail": "amber"
   }
-} 
+}
