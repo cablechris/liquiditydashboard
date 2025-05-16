@@ -41,37 +41,75 @@ print(f"Series directory: {SERIES_DIR}")
 # ---------- helpers ----------
 
 def fred(series: str):
+    """Fetch data from FRED API with robust error handling"""
+    
     if not FRED:
         print(f"WARNING: FRED API key is not set. Cannot fetch {series} data.")
         return 0  # Return a default value if FRED API key is not set
     
-    url = ("https://api.stlouisfed.org/fred/series/observations"
-           f"?series_id={series}&file_type=json&api_key={FRED}")
-    print(f"Fetching data from FRED for series: {series}")
     try:
-        response = requests.get(url, timeout=30)
-        response.raise_for_status()  # Raise an exception for bad responses
-        data = response.json()
+        # First, verify the API key works by checking the API information endpoint
+        info_url = f"https://api.stlouisfed.org/fred/series/search?search_text={series}&api_key={FRED}&file_type=json"
+        print(f"Verifying FRED API key with series info request for: {series}")
         
-        # Debug output to see what the API is returning
-        print(f"FRED API response for {series}: {data.keys()}")
+        info_response = requests.get(info_url, timeout=30)
+        info_response.raise_for_status()
+        info_data = info_response.json()
         
-        # Check if 'observations' exists in the response
-        if 'observations' not in data:
-            print(f"WARNING: No 'observations' field in FRED API response for {series}. API returned: {data}")
-            return 0  # Return default value
-        
-        # Check if there are any observations
-        if not data["observations"]:
-            print(f"WARNING: Empty observations list for {series}")
+        if 'error_code' in info_data:
+            print(f"FRED API error: {info_data.get('error_message', 'Unknown error')}")
             return 0
             
-        obs = data["observations"][-1]
-        return float(obs["value"]) if obs["value"] != "." else None
+        # Now fetch the actual observations
+        url = f"https://api.stlouisfed.org/fred/series/observations?series_id={series}&api_key={FRED}&file_type=json&sort_order=desc&limit=1"
+        print(f"Fetching latest observation for series: {series}")
+        
+        response = requests.get(url, timeout=30)
+        response.raise_for_status()
+        data = response.json()
+        
+        # Debug what we received
+        print(f"FRED API returned keys: {list(data.keys())}")
+        
+        if 'error_code' in data:
+            print(f"FRED API error: {data.get('error_message', 'Unknown error')}")
+            return 0
+            
+        if 'observations' not in data:
+            print(f"No 'observations' in response. Full response: {data}")
+            return 0
+            
+        if not data['observations']:
+            print(f"Empty observations list for {series}")
+            return 0
+        
+        # Get the latest observation
+        latest = data['observations'][0]
+        print(f"Latest observation for {series}: {latest}")
+        
+        if 'value' not in latest:
+            print(f"No 'value' in observation: {latest}")
+            return 0
+            
+        value = latest['value']
+        if value == '.':
+            print(f"Value is missing (.) for {series}")
+            return 0
+            
+        return float(value)
+        
+    except requests.RequestException as e:
+        print(f"Request error fetching FRED data for {series}: {e}")
+        return 0
+    except ValueError as e:
+        print(f"Value error parsing FRED data for {series}: {e}")
+        return 0
+    except KeyError as e:
+        print(f"Key error accessing FRED data for {series}: {e}")
+        return 0
     except Exception as e:
-        print(f"Error fetching FRED data for {series}: {e}")
-        print(f"Full error details: {type(e).__name__}")
-        return 0  # Return a default value in case of error
+        print(f"Unexpected error fetching FRED data for {series}: {e}, type: {type(e).__name__}")
+        return 0
 
 
 def get_move() -> float:
