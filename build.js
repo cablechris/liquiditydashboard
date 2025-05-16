@@ -25,7 +25,7 @@ if (!fs.existsSync('web/package.json')) {
 try {
   // Run the build command
   console.log('Installing dependencies...');
-  execSync('cd web && npm install', { stdio: 'inherit' });
+  execSync('cd web && npm install --include=dev', { stdio: 'inherit' });
   
   console.log('Building Next.js app...');
   execSync('cd web && npm run build', { stdio: 'inherit' });
