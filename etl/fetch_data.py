@@ -48,67 +48,39 @@ def fred(series: str):
         return 0  # Return a default value if FRED API key is not set
     
     try:
-        # First, verify the API key works by checking the API information endpoint
-        info_url = f"https://api.stlouisfed.org/fred/series/search?search_text={series}&api_key={FRED}&file_type=json"
-        print(f"Verifying FRED API key with series info request for: {series}")
-        
-        info_response = requests.get(info_url, timeout=30)
-        info_response.raise_for_status()
-        info_data = info_response.json()
-        
-        if 'error_code' in info_data:
-            print(f"FRED API error: {info_data.get('error_message', 'Unknown error')}")
-            return 0
-            
-        # Now fetch the actual observations
+        print(f"\nFetching data for series: {series}")
+        # Use the exact same URL format that works in fetch_direct.py
         url = f"https://api.stlouisfed.org/fred/series/observations?series_id={series}&api_key={FRED}&file_type=json&sort_order=desc&limit=1"
-        print(f"Fetching latest observation for series: {series}")
         
+        print(f"Request URL: {url.replace(FRED, 'API_KEY_HIDDEN')}")
         response = requests.get(url, timeout=30)
         response.raise_for_status()
         data = response.json()
         
-        # Debug what we received
-        print(f"FRED API returned keys: {list(data.keys())}")
+        print(f"Response status: {response.status_code}")
+        print(f"Response keys: {list(data.keys())}")
         
-        if 'error_code' in data:
-            print(f"FRED API error: {data.get('error_message', 'Unknown error')}")
-            return 0
-            
         if 'observations' not in data:
-            print(f"No 'observations' in response. Full response: {data}")
+            print(f"WARNING: No 'observations' key in response: {data}")
             return 0
             
         if not data['observations']:
-            print(f"Empty observations list for {series}")
+            print(f"WARNING: Empty observations list for {series}")
             return 0
-        
-        # Get the latest observation
+            
         latest = data['observations'][0]
-        print(f"Latest observation for {series}: {latest}")
+        print(f"Latest observation: {latest}")
         
-        if 'value' not in latest:
-            print(f"No 'value' in observation: {latest}")
+        if 'value' not in latest or latest['value'] == '.':
+            print(f"WARNING: No valid value in observation: {latest}")
             return 0
             
-        value = latest['value']
-        if value == '.':
-            print(f"Value is missing (.) for {series}")
-            return 0
-            
-        return float(value)
+        value = float(latest['value'])
+        print(f"Parsed value: {value}")
+        return value
         
-    except requests.RequestException as e:
-        print(f"Request error fetching FRED data for {series}: {e}")
-        return 0
-    except ValueError as e:
-        print(f"Value error parsing FRED data for {series}: {e}")
-        return 0
-    except KeyError as e:
-        print(f"Key error accessing FRED data for {series}: {e}")
-        return 0
     except Exception as e:
-        print(f"Unexpected error fetching FRED data for {series}: {e}, type: {type(e).__name__}")
+        print(f"ERROR fetching FRED data for {series}: {e}")
         return 0
 
 
@@ -178,7 +150,11 @@ try:
     new_row = pd.DataFrame([row])
     new_row['date'] = pd.to_datetime(new_row['date'])
     new_row = new_row.set_index('date')
-    hist = pd.concat([hist, new_row]).drop_duplicates(keep="last")
+    
+    # Merge with existing history, keeping only the latest value for any duplicate dates
+    hist = pd.concat([hist, new_row])
+    hist = hist[~hist.index.duplicated(keep='last')]  # Remove duplicate indices, keeping latest
+    
     hist.to_parquet(hist_path)
     print(f"History saved to {hist_path}")
 
