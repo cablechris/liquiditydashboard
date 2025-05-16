@@ -5,10 +5,17 @@ module.exports = {
     extend: {
       colors: {
         status: {
-          green: "#22c55e",
-          amber: "#fbbf24",
-          red: "#ef4444",
+          green: "#16a34a",
+          amber: "#f59e0b",
+          red: "#dc2626",
         },
+        card: {
+          bg: "#f9fafb",
+          ring: "#e2e8f0",
+        },
+      },
+      fontFamily: {
+        sans: ["Inter", "ui-sans-serif", "system-ui"],
       },
     },
   },
