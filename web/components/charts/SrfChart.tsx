@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import ChartBase from './ChartBase';
-import series from '@/public/series/srf.json';
+import series from '../../public/series/srf.json';
 
 export default function SrfChart({ meta }: { meta: any }) {
   return (

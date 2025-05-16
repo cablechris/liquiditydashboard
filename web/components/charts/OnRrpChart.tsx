@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import ChartBase from './ChartBase';
-import series from '@/public/series/on_rrp.json';
+import series from '../../public/series/on_rrp.json';
 
 export default function OnRrpChart({ meta }: { meta: any }) {
   return (

@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import ChartBase from './ChartBase';
-import series from '@/public/series/reserves.json';
+import series from '../../public/series/reserves.json';
 
 export default function ReservesChart({ meta }: { meta: any }) {
   return (

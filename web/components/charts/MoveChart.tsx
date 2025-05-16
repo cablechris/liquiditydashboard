@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import ChartBase from './ChartBase';
-import series from '@/public/series/move.json';
+import series from '../../public/series/move.json';
 
 export default function MoveChart({ meta }: { meta: any }) {
   return (
