@@ -72,6 +72,19 @@ status["tail"] = "red" if (bs > 0.6 and tail >= 4) else "amber" if (bs > 0.6 or 
 
 data["status"] = status
 
+# ---------- history & sparks ----------
+HIST = DATA_DIR / "history.parquet"
+row  = pd.DataFrame([data]).set_index("date")
+if HIST.exists():
+    hist = pd.read_parquet(HIST)
+    hist = pd.concat([hist, row]).drop_duplicates(keep="last")
+else:
+    hist = row
+hist.to_parquet(HIST)
+# 30‑day window for mini‑sparklines
+last30 = hist.tail(30).reset_index()
+PUBLIC_DIR.joinpath("sparks.json").write_text(last30.to_json(orient="records"))
+
 # ---------- save ----------
 DATA_DIR.joinpath(f"{today}.parquet").write_bytes(pd.Series(data).to_frame("value").to_parquet())
 PUBLIC_DIR.joinpath("dashboard.json").write_text(json.dumps(data, indent=2)) 

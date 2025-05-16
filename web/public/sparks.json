@@ -1,0 +1,74 @@
+[
+  {
+    "date": "2023-04-15",
+    "on_rrp": 72000,
+    "reserves": 2650000,
+    "move": 120,
+    "srf": 8000,
+    "bill_share": 0.61,
+    "tail_bp": 3.2
+  },
+  {
+    "date": "2023-04-16",
+    "on_rrp": 73500,
+    "reserves": 2680000,
+    "move": 125,
+    "srf": 9000,
+    "bill_share": 0.62,
+    "tail_bp": 3.3
+  },
+  {
+    "date": "2023-04-17",
+    "on_rrp": 74000,
+    "reserves": 2700000,
+    "move": 128,
+    "srf": 9500,
+    "bill_share": 0.63,
+    "tail_bp": 3.4
+  },
+  {
+    "date": "2023-04-18",
+    "on_rrp": 74500,
+    "reserves": 2720000,
+    "move": 130,
+    "srf": 9800,
+    "bill_share": 0.64,
+    "tail_bp": 3.5
+  },
+  {
+    "date": "2023-04-19",
+    "on_rrp": 75000,
+    "reserves": 2750000,
+    "move": 132,
+    "srf": 10000,
+    "bill_share": 0.65,
+    "tail_bp": 3.6
+  },
+  {
+    "date": "2023-04-20",
+    "on_rrp": 74800,
+    "reserves": 2740000,
+    "move": 131,
+    "srf": 9900,
+    "bill_share": 0.64,
+    "tail_bp": 3.5
+  },
+  {
+    "date": "2023-04-21",
+    "on_rrp": 74000,
+    "reserves": 2730000,
+    "move": 129,
+    "srf": 9700,
+    "bill_share": 0.63,
+    "tail_bp": 3.4
+  },
+  {
+    "date": "2023-04-22",
+    "on_rrp": 75000,
+    "reserves": 2750000,
+    "move": 130,
+    "srf": 10000,
+    "bill_share": 0.65,
+    "tail_bp": 3.5
+  }
+] 
