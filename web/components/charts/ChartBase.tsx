@@ -22,6 +22,7 @@ type LabelPosition =
 
 interface ChartBaseProps {
   metric: string;
+  title: string;
   series: any[];
   children?: React.ReactNode;
   thresholds?: {
@@ -32,7 +33,7 @@ interface ChartBaseProps {
   }[];
 }
 
-export default function ChartBase({ metric, series, children, thresholds = [] }: ChartBaseProps) {
+export default function ChartBase({ metric, title, series, children, thresholds = [] }: ChartBaseProps) {
   // Use the last 365 days of data by default
   const data = series.slice(-365);
   
@@ -41,6 +42,9 @@ export default function ChartBase({ metric, series, children, thresholds = [] }:
 
   return (
     <div id={`chart-${metric}`} className="mb-12">
+      {/* Chart Title */}
+      <h3 className="text-2xl font-bold mb-4">{title}</h3>
+      
       {/* Chart */}
       <ResponsiveContainer width="100%" height={320}>
         <AreaChart data={data}>

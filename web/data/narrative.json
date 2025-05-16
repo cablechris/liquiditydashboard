@@ -1,0 +1,52 @@
+{
+  "on_rrp": {
+    "header": "Overnight Reverse Repo Facility",
+    "danger": "Below $500B signals potential liquidity stress",
+    "why": "ON-RRP usage shows excess liquidity in the system. Rapid declines suggest funding market stress as cash moves from the safety of the Fed to higher-yielding alternatives. Historically, ON-RRP has drained before liquidity crises.",
+    "quote": {
+      "text": "The ON-RRP facility is the last defense against a collapse in front-end rates and, once it empties, funding markets enter dangerous territory.",
+      "author": "Zoltan Pozsar",
+      "source": "Credit Suisse, March 2023"
+    }
+  },
+  "reserves": {
+    "header": "Bank Reserve Balances",
+    "danger": "Below $2.5T signals potential liquidity stress",
+    "why": "Bank reserves are the primary monetary policy transmission channel. When reserves fall too low, banks become reluctant to lend in the repo and interbank markets, potentially causing Treasury market dysfunction.",
+    "quote": {
+      "text": "When banks become uncomfortable with the level of reserves, they become reluctant to lend in repo markets and the effective fed funds rate can materially deviate from target.",
+      "author": "Jerome Powell",
+      "source": "FOMC Press Conference, September 2022"
+    }
+  },
+  "move": {
+    "header": "MOVE Index",
+    "danger": "Above 140 signals elevated Treasury volatility",
+    "why": "The MOVE index measures expected volatility in US Treasury yields. Rising MOVE readings indicate stress in the deepest and most liquid market in the world, often preceding significant Fed policy shifts.",
+    "quote": {
+      "text": "The MOVE index is the canary in the coal mine. When Treasury volatility rises, it signals that something fundamental has changed in the financial market's assessment of the path forward.",
+      "author": "Mohamed El-Erian",
+      "source": "Financial Times, October 2022"
+    }
+  },
+  "srf": {
+    "header": "Standing Repo Facility Usage",
+    "danger": "Above $50B signals significant liquidity issues",
+    "why": "The Standing Repo Facility provides overnight loans to primary dealers against Treasury collateral. Usage indicates dealers can't fund their Treasury positions in the market and need Fed intervention.",
+    "quote": {
+      "text": "The SRF represents the Fed's first line of liquidity defense. Sustained usage indicates deep market dysfunction in Treasury markets, requiring direct Fed intervention.",
+      "author": "Lorie Logan",
+      "source": "Dallas Fed, April 2023"
+    }
+  },
+  "funding": {
+    "header": "Treasury Funding Pressure",
+    "danger": "Bill share > 60% and tail > 4bp signals strain",
+    "why": "These metrics measure Treasury market function from two angles: excessive reliance on short-term funding (bill share) and weakening demand at auctions (tail performance). Either can signal impending dislocations.",
+    "quote": {
+      "text": "Treasury market disruptions come in many forms, but deteriorating auction metrics and excessive reliance on bills have preceded every major Treasury market dislocation in the last 15 years.",
+      "author": "Beth Hammack",
+      "source": "Treasury Borrowing Advisory Committee, February 2023"
+    }
+  }
+} 
