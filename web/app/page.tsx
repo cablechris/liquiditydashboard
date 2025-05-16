@@ -1,7 +1,6 @@
 import React from 'react';
 import Thermometer from "@/components/Thermometer";
 import MoveLine from "@/components/MoveLine";
-import Strip from '@/components/TrafficStrip';
 import OnRrpChart from '@/components/charts/OnRrpChart';
 import ReservesChart from '@/components/charts/ReservesChart';
 import MoveChart from '@/components/charts/MoveChart';
@@ -74,9 +73,6 @@ export default function Home() {
           </div>
         </div>
       </header>
-
-      {/* ———  Slick Traffic-Light Strip  ——— */}
-      <Strip />
 
       {/* ———  Charts  ——— */}
       <main className="container mx-auto px-4 md:px-0 space-y-12 mb-16">
