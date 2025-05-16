@@ -23,9 +23,21 @@ if (!fs.existsSync('web/package.json')) {
 }
 
 try {
-  // Run the build command
-  console.log('Installing dependencies...');
+  // Install dependencies in the root package first
+  console.log('Installing root dependencies...');
+  execSync('npm install redis@4.6.13', { stdio: 'inherit' });
+  
+  // Run the build command in web directory
+  console.log('Installing web dependencies...');
   execSync('cd web && npm install --include=dev', { stdio: 'inherit' });
+  
+  // Force install redis in web directory
+  console.log('Ensuring redis package is installed...');
+  execSync('cd web && npm install redis@4.6.13 --save', { stdio: 'inherit' });
+  
+  // Validate redis can be imported
+  console.log('Validating redis installation...');
+  execSync('cd web && node -e "require(\'redis\')"', { stdio: 'inherit' });
   
   console.log('Building Next.js app...');
   execSync('cd web && npm run build', { stdio: 'inherit' });
