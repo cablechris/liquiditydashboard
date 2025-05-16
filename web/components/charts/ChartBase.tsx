@@ -4,7 +4,7 @@ import {
   CartesianGrid, ReferenceLine, Tooltip, Area,
 } from 'recharts';
 import { format } from 'date-fns';
-import { fmt$ } from '@/lib/format';
+import { fmt$ } from '../../lib/format';
 
 type LabelPosition = 
   | 'top' 

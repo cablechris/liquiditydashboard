@@ -9,8 +9,8 @@ import {
   CartesianGrid,
   TooltipProps
 } from 'recharts';
-import { fmt$ } from '@/lib/format';
-import snap from '@/public/dashboard.json';
+import { fmt$ } from '../lib/format';
+import snap from '../public/dashboard.json';
 
 // map status name to color hex
 const STATUS_COLOR: Record<string,string> = {

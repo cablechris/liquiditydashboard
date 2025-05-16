@@ -1,8 +1,8 @@
 'use client';
 import React, { useState, useMemo } from 'react';
 import { ResponsiveContainer, ComposedChart, Line, Bar, ReferenceLine, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from "recharts";
-import series from "@/public/series/funding.json";
-import { ACCENT } from '@/lib/palette';
+import series from "../../public/series/funding.json";
+import { ACCENT } from '../../lib/palette';
 import { differenceInCalendarDays, format } from 'date-fns';
 
 export default function FundingChart({ meta }: { meta: any }) {
