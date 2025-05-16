@@ -13,6 +13,9 @@ const nextConfig = {
   // Handle trailing slashes
   trailingSlash: false,
 
+  // Set the base path if deploying to a subdirectory
+  // basePath: '',
+
   // Configure path aliases explicitly
   webpack: (config) => {
     config.resolve.alias = {
@@ -21,6 +24,9 @@ const nextConfig = {
     };
     return config;
   },
+
+  // Disable source maps in production
+  productionBrowserSourceMaps: false,
 }
 
 module.exports = nextConfig 
