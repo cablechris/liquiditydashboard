@@ -7,10 +7,8 @@ import {
   Tooltip,
   ReferenceDot,
   CartesianGrid,
-  TooltipProps
 } from 'recharts';
 import { fmt$ } from '../lib/format';
-import snap from '../public/dashboard.json';
 
 // map status name to color hex
 const STATUS_COLOR: Record<string,string> = {
@@ -19,14 +17,23 @@ const STATUS_COLOR: Record<string,string> = {
   red:   '#d32f2f',
 };
 
-interface Point { date: string; value: number; }
-interface Props { metric: keyof typeof snap.status; title: string; data: Point[]; }
+// Define metric types
+export type MetricType = 'on_rrp' | 'reserves' | 'move' | 'srf' | 'tail';
 
-export default function MetricWidget({ metric, title, data }: Props) {
-  const status = snap.status[metric];
-  const color = STATUS_COLOR[status] || STATUS_COLOR.green;
+interface Point { date: string; value: number; }
+interface Props { 
+  metric: MetricType; 
+  title: string; 
+  data: Point[];
+  status?: string; 
+}
+
+export default function MetricWidget({ metric, title, data, status }: Props) {
+  // Default to green if status is not provided
+  const statusColor = status ? STATUS_COLOR[status] : STATUS_COLOR.green;
+  const color = statusColor || STATUS_COLOR.green;
   const sparkData = useMemo(() => data.slice(-90), [data]);
-  const latest = sparkData[sparkData.length - 1];
+  const latest = sparkData[sparkData.length - 1] || { value: 0, date: new Date().toISOString() };
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
 
   return (
@@ -60,7 +67,7 @@ export default function MetricWidget({ metric, title, data }: Props) {
               fill={`url(#grad-${metric})`}
               dot={false}
             />
-            {hoverIdx !== null && (
+            {hoverIdx !== null && sparkData[hoverIdx] && (
               <ReferenceDot
                 x={sparkData[hoverIdx].date}
                 y={sparkData[hoverIdx].value}

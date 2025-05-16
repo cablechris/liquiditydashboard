@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import OnRrpChart from '../components/charts/OnRrpChart';
 import ReservesChart from '../components/charts/ReservesChart';
@@ -7,10 +7,29 @@ import MoveChart from '../components/charts/MoveChart';
 import SrfChart from '../components/charts/SrfChart';
 import FundingChart from '../components/charts/FundingChart';
 import MicroDashStrip from '../components/MicroDashStrip';
+import { getDashboardData, getLastUpdated } from '../lib/data';
 
 export default function Home() {
-  // Mock metadata for each chart
-  const meta = { date: '2024-05-16' };
+  const [dashboardData, setDashboardData] = useState<any>(null);
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const data = await getDashboardData();
+        const updated = await getLastUpdated() as string;
+        setDashboardData(data);
+        setLastUpdated(updated);
+      } catch (error) {
+        console.error('Error loading dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadData();
+  }, []);
 
   return (
     <>
@@ -23,6 +42,11 @@ export default function Home() {
             </h1>
             <div className="bg-gray-50 p-4 rounded-xl shadow-sm">
               <MicroDashStrip />
+              {lastUpdated && (
+                <div className="text-xs text-gray-500 mt-2 text-right">
+                  Last updated: {new Date(lastUpdated).toLocaleString()}
+                </div>
+              )}
             </div>
             <div className="max-w-3xl">
               <p className="text-lg md:text-xl text-gray-600 leading-relaxed">
@@ -42,14 +66,23 @@ export default function Home() {
       </header>
 
       <main className="container mx-auto px-4 md:px-0 space-y-12 mb-16">
-        {/* Charts section */}
-        <div className="space-y-12">
-          <OnRrpChart meta={meta} />
-          <ReservesChart meta={meta} />
-          <MoveChart meta={meta} />
-          <SrfChart meta={meta} />
-          <FundingChart meta={meta} />
-        </div>
+        {loading ? (
+          <div className="text-center py-8">
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-indigo-600 border-r-transparent"></div>
+            <p className="mt-2 text-gray-600">Loading dashboard data...</p>
+          </div>
+        ) : (
+          <>
+            {/* Charts section */}
+            <div className="space-y-12">
+              <OnRrpChart meta={dashboardData || { date: new Date().toISOString().split('T')[0] }} />
+              <ReservesChart meta={dashboardData || { date: new Date().toISOString().split('T')[0] }} />
+              <MoveChart meta={dashboardData || { date: new Date().toISOString().split('T')[0] }} />
+              <SrfChart meta={dashboardData || { date: new Date().toISOString().split('T')[0] }} />
+              <FundingChart meta={dashboardData || { date: new Date().toISOString().split('T')[0] }} />
+            </div>
+          </>
+        )}
       
         <div className="mt-8">
           <details className="md:open">
