@@ -1,7 +1,7 @@
 """Daily fetch + derive deltas for Liquidity Dashboard v0.2"""
 from __future__ import annotations
 from datetime import date, timedelta
-import os, json, pathlib, requests, pandas as pd
+import os, json, pathlib, requests, pandas as pd, sys
 from bs4 import BeautifulSoup
 
 # Custom JSON encoder for Pandas Timestamp objects
@@ -54,14 +54,22 @@ def fred(series: str):
         
         print(f"Request URL: {url.replace(FRED, 'API_KEY_HIDDEN')}")
         response = requests.get(url, timeout=30)
+        print(f"Response status: {response.status_code}")
+        
+        # Show full response body for debugging in CI environment
+        if os.environ.get('CI') == 'true':
+            print(f"Raw response: {response.text[:500]}...")
+        
         response.raise_for_status()
         data = response.json()
         
-        print(f"Response status: {response.status_code}")
         print(f"Response keys: {list(data.keys())}")
         
         if 'observations' not in data:
-            print(f"WARNING: No 'observations' key in response: {data}")
+            print(f"WARNING: No 'observations' key in response. Full response: {data}")
+            # Check if there's an error message in the response
+            if 'error_message' in data:
+                print(f"API ERROR: {data['error_message']}")
             return 0
             
         if not data['observations']:
@@ -79,8 +87,23 @@ def fred(series: str):
         print(f"Parsed value: {value}")
         return value
         
+    except requests.exceptions.HTTPError as e:
+        print(f"HTTP ERROR fetching FRED data for {series}: {e}")
+        return 0
+    except requests.exceptions.ConnectionError as e:
+        print(f"CONNECTION ERROR fetching FRED data for {series}: {e}")
+        return 0
+    except requests.exceptions.Timeout as e:
+        print(f"TIMEOUT fetching FRED data for {series}: {e}")
+        return 0
+    except requests.exceptions.RequestException as e:
+        print(f"REQUEST ERROR fetching FRED data for {series}: {e}")
+        return 0
+    except json.JSONDecodeError as e:
+        print(f"JSON DECODE ERROR for {series}: {e}, Response: {response.text[:500]}")
+        return 0
     except Exception as e:
-        print(f"ERROR fetching FRED data for {series}: {e}")
+        print(f"ERROR fetching FRED data for {series}: {type(e).__name__}: {e}")
         return 0
 
 
@@ -129,6 +152,20 @@ try:
         "srf":      get_srf(),
     }
     row["bill_share"], row["tail_bp"] = get_bills_tails()
+
+    # Check if all our API calls failed and need to use fallback data
+    if row["on_rrp"] == 0 and row["reserves"] == 0:
+        print("WARNING: All FRED API calls failed. Attempting to use fallback data.")
+        try:
+            from etl.fallback_data import generate_fallback_data
+            if generate_fallback_data():
+                print("Fallback data generation succeeded. Exiting.")
+                sys.exit(0)
+            else:
+                print("Fallback data generation failed. Continuing with zeros.")
+        except Exception as e:
+            print(f"Error importing fallback data module: {e}")
+            print("Continuing with zeros.")
 
     # Round billions to one decimal for smoother sparklines
     row["on_rrp"] = round(row["on_rrp"], 0)

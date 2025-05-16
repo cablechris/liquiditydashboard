@@ -34,63 +34,58 @@ jobs:
             echo "History data already exists, skipping initialization"
           fi
           
-      - name: Test FRED API directly
+      - name: Validate FRED API key
         env:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: |
-          echo "Testing FRED API directly with Python"
-          echo "FRED_API_KEY is $(if [[ -n "$FRED_API_KEY" ]]; then echo "set"; else echo "NOT SET"; fi)"
-          python -c "import requests; print('API response:', requests.get('https://api.stlouisfed.org/fred/series/observations?series_id=RRPONTSYD&api_key=' + '${{ secrets.FRED_API_KEY }}' + '&file_type=json&sort_order=desc&limit=1').json())"
+          echo "Validating FRED API key..."
+          MASKED_KEY="${FRED_API_KEY:0:4}...${FRED_API_KEY: -4}"
+          echo "FRED_API_KEY length: ${#FRED_API_KEY} characters"
+          echo "FRED_API_KEY is: $MASKED_KEY"
+          
+          if [ ${#FRED_API_KEY} -ne 32 ]; then
+            echo "WARNING: FRED API key is not 32 characters long"
+          fi
+          
+          # Export CI flag for enhanced debugging in fetch_data.py
+          echo "CI=true" >> $GITHUB_ENV
+          
+          # Simple test without revealing the key
+          python -c "
+import os, requests
+key = os.environ.get('FRED_API_KEY', '')
+print(f'FRED API key length: {len(key)}')
+if key:
+    try:
+        # Test endpoint that doesn't require series permissions
+        url = f'https://api.stlouisfed.org/fred/category?category_id=0&api_key={key}&file_type=json'
+        response = requests.get(url, timeout=30)
+        print(f'Status code: {response.status_code}')
+        if response.status_code == 200:
+            print('API key is valid!')
+        else:
+            print(f'API key test failed. Status: {response.status_code}')
+            print(f'Response: {response.text[:500]}')
+    except Exception as e:
+        print(f'Error testing API key: {e}')
+"
 
       - name: Run ETL script
         env:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          CI: true
+        id: etl
+        continue-on-error: true
         run: |
           echo "Running ETL script with Python $(python --version)"
-          echo "FRED_API_KEY is $(if [[ -n "$FRED_API_KEY" ]]; then echo "set"; else echo "NOT SET"; fi)"
+          echo "FRED_API_KEY is set with length: ${#FRED_API_KEY}"
+          python etl/fetch_data.py
           
-          # Create a simple fetch script for debugging
-          cat > debug_fetch.py << EOL
-import requests
-import os
-import json
-
-def test_fred():
-    key = os.environ.get('FRED_API_KEY', '')
-    print(f"API key length: {len(key)}")
-    
-    try:
-        # Test the series search endpoint
-        url1 = f"https://api.stlouisfed.org/fred/series/search?search_text=RRPONTSYD&api_key={key}&file_type=json"
-        r1 = requests.get(url1, timeout=30)
-        print(f"Series search status: {r1.status_code}")
-        if r1.status_code == 200:
-            print(f"Series search data: {json.dumps(r1.json(), indent=2)}")
-        
-        # Test the observations endpoint
-        url2 = f"https://api.stlouisfed.org/fred/series/observations?series_id=RRPONTSYD&api_key={key}&file_type=json&sort_order=desc&limit=1"
-        r2 = requests.get(url2, timeout=30)
-        print(f"Observations status: {r2.status_code}")
-        if r2.status_code == 200:
-            data = r2.json()
-            print(f"Observations keys: {list(data.keys())}")
-            if 'observations' in data and data['observations']:
-                print(f"Latest observation: {data['observations'][0]}")
-            else:
-                print("No observations returned")
-        
-    except Exception as e:
-        print(f"Error: {e}")
-
-if __name__ == "__main__":
-    test_fred()
-EOL
-          
-          # Run the debug script
-          python debug_fetch.py
-          
-          # Run the actual ETL script
-          python etl/fetch_data.py || echo "ETL script failed but continuing"
+      - name: Fallback data generation if ETL failed
+        if: steps.etl.outcome == 'failure'
+        run: |
+          echo "ETL script failed. Generating fallback data..."
+          python etl/fallback_data.py
                     
       - name: Commit and push changes
         run: |
