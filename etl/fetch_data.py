@@ -4,15 +4,36 @@ from datetime import date, timedelta
 import os, json, pathlib, requests, pandas as pd
 from bs4 import BeautifulSoup
 
-BASE = pathlib.Path(__file__).parent.parent
-DATA = BASE / "data"; DATA.mkdir(exist_ok=True)
-PUB  = BASE / "web" / "public"; PUB.mkdir(exist_ok=True)
-SERIES_DIR = PUB / "series"; SERIES_DIR.mkdir(exist_ok=True)
+# Custom JSON encoder for Pandas Timestamp objects
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, pd.Timestamp):
+            return obj.strftime('%Y-%m-%d')
+        return super().default(obj)
+
+# Use os.path to reliably get the project root directory
+script_path = os.path.abspath(__file__)
+script_dir = os.path.dirname(script_path)
+BASE = os.path.dirname(script_dir)  # Go up one level to project root
+
+print(f"Script path: {script_path}")
+print(f"Script directory: {script_dir}")
+print(f"Base directory: {BASE}")
+
+# Define paths using os.path.join for better cross-platform compatibility
+DATA = os.path.join(BASE, "data")
+PUB = os.path.join(BASE, "web", "public")
+SERIES_DIR = os.path.join(PUB, "series")
+
+# Create directories if they don't exist
+os.makedirs(DATA, exist_ok=True)
+os.makedirs(PUB, exist_ok=True)
+os.makedirs(SERIES_DIR, exist_ok=True)
+
 FRED = os.getenv("FRED_API_KEY", "")
 
 # Print debug information
 print(f"Starting ETL process with FRED API key: {'Available' if FRED else 'MISSING'}")
-print(f"Base directory: {BASE}")
 print(f"Data directory: {DATA}")
 print(f"Public directory: {PUB}")
 print(f"Series directory: {SERIES_DIR}")
@@ -31,10 +52,25 @@ def fred(series: str):
         response = requests.get(url, timeout=30)
         response.raise_for_status()  # Raise an exception for bad responses
         data = response.json()
+        
+        # Debug output to see what the API is returning
+        print(f"FRED API response for {series}: {data.keys()}")
+        
+        # Check if 'observations' exists in the response
+        if 'observations' not in data:
+            print(f"WARNING: No 'observations' field in FRED API response for {series}. API returned: {data}")
+            return 0  # Return default value
+        
+        # Check if there are any observations
+        if not data["observations"]:
+            print(f"WARNING: Empty observations list for {series}")
+            return 0
+            
         obs = data["observations"][-1]
         return float(obs["value"]) if obs["value"] != "." else None
     except Exception as e:
         print(f"Error fetching FRED data for {series}: {e}")
+        print(f"Full error details: {type(e).__name__}")
         return 0  # Return a default value in case of error
 
 
@@ -89,23 +125,32 @@ try:
     row["reserves"] = round(row["reserves"], 0)
 
     # ---------- history ----------
-    hist_path = DATA / "history.parquet"
-    if hist_path.exists():
+    hist_path = os.path.join(DATA, "history.parquet")
+    if os.path.exists(hist_path):
         print(f"Loading existing history from {hist_path}")
         hist = pd.read_parquet(hist_path)
     else:
         print(f"No history file found at {hist_path}, creating a new DataFrame")
-        # Create a default history with the current row
-        hist = pd.DataFrame()
+        # Create a default history with the current row and proper date index
+        hist = pd.DataFrame([row])
+        hist['date'] = pd.to_datetime(hist['date'])
+        hist = hist.set_index('date')
     
     # Append new row to history
-    hist = pd.concat([hist, pd.DataFrame([row]).set_index("date")]).drop_duplicates(keep="last")
+    new_row = pd.DataFrame([row])
+    new_row['date'] = pd.to_datetime(new_row['date'])
+    new_row = new_row.set_index('date')
+    hist = pd.concat([hist, new_row]).drop_duplicates(keep="last")
     hist.to_parquet(hist_path)
     print(f"History saved to {hist_path}")
 
     # keep only last 10 years (3650 days)
     hist = hist.tail(3650)
 
+    # Ensure index is datetime type before resampling
+    if not isinstance(hist.index, pd.DatetimeIndex):
+        hist.index = pd.to_datetime(hist.index)
+    
     # Option B: ensure daily frequency with forward-fill
     hist = hist.resample('D').ffill()
     print(f"History resampled to daily frequency")
@@ -141,17 +186,23 @@ try:
 
     # ---------- outputs ----------
     # snapshot json
-    dash = PUB / "dashboard.json"; dash.write_text(json.dumps(row, indent=2))
+    dash = os.path.join(PUB, "dashboard.json")
+    with open(dash, 'w') as f:
+        json.dump(row, f, indent=2, cls=DateTimeEncoder)
     print(f"Dashboard JSON saved to {dash}")
     
     # spark json (30 pts)
-    sparks_path = PUB / "sparks.json"
-    sparks_path.write_text(hist.tail(30).reset_index().to_json(orient="records"))
+    sparks_path = os.path.join(PUB, "sparks.json")
+    spark_data = json.loads(hist.tail(30).reset_index().to_json(orient="records", date_format='iso'))
+    with open(sparks_path, 'w') as f:
+        json.dump(spark_data, f)
     print(f"Sparks JSON saved to {sparks_path}")
     
     # auction panel json (12 m)
-    auctions_path = PUB / "auctions.json"
-    auctions_path.write_text(hist[["bill_share","tail_bp"]].tail(365).reset_index().to_json(orient="records"))
+    auctions_path = os.path.join(PUB, "auctions.json")
+    auction_data = json.loads(hist[["bill_share","tail_bp"]].tail(365).reset_index().to_json(orient="records", date_format='iso'))
+    with open(auctions_path, 'w') as f:
+        json.dump(auction_data, f)
     print(f"Auctions JSON saved to {auctions_path}")
 
     # Generate individual series JSON files with daily frequency
@@ -159,8 +210,10 @@ try:
     for metric in metrics:
         series_data = hist[[metric]].reset_index()
         series_data = series_data.rename(columns={metric: "value"})
-        series_path = SERIES_DIR / f"{metric}.json"
-        series_path.write_text(series_data.to_json(orient="records"))
+        series_path = os.path.join(SERIES_DIR, f"{metric}.json")
+        json_str = series_data.to_json(orient="records", date_format='iso')
+        with open(series_path, 'w') as f:
+            f.write(json_str)
         print(f"{metric} series JSON saved to {series_path}")
 
     # Generate funding combined series (bill_share and tail_bp)
@@ -168,17 +221,21 @@ try:
     # Create a composite 'value' that is normalized to show both metrics
     funding_data["value"] = (funding_data["bill_share"] * 100) + (funding_data["tail_bp"] / 10)
     funding_data = funding_data[["date", "value"]]
-    funding_path = SERIES_DIR / "funding.json"
-    funding_path.write_text(funding_data.to_json(orient="records"))
+    funding_path = os.path.join(SERIES_DIR, "funding.json")
+    json_str = funding_data.to_json(orient="records", date_format='iso')
+    with open(funding_path, 'w') as f:
+        f.write(json_str)
     print(f"Funding series JSON saved to {funding_path}")
 
     # Also output individual bill_share and tail_bp series
     bill_share_data = hist[["bill_share"]].rename(columns={"bill_share": "value"}).reset_index()
     tail_bp_data = hist[["tail_bp"]].rename(columns={"tail_bp": "value"}).reset_index()
-    bill_share_path = SERIES_DIR / "bill_share.json"
-    tail_bp_path = SERIES_DIR / "tail_bp.json"
-    bill_share_path.write_text(bill_share_data.to_json(orient="records"))
-    tail_bp_path.write_text(tail_bp_data.to_json(orient="records"))
+    bill_share_path = os.path.join(SERIES_DIR, "bill_share.json")
+    tail_bp_path = os.path.join(SERIES_DIR, "tail_bp.json")
+    with open(bill_share_path, 'w') as f:
+        f.write(bill_share_data.to_json(orient="records", date_format='iso'))
+    with open(tail_bp_path, 'w') as f:
+        f.write(tail_bp_data.to_json(orient="records", date_format='iso'))
     print(f"Bill share series JSON saved to {bill_share_path}")
     print(f"Tail bp series JSON saved to {tail_bp_path}")
     
