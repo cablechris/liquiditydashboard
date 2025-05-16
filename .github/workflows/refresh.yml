@@ -25,6 +25,15 @@ jobs:
           mkdir -p data
           mkdir -p web/public/series
           
+      - name: Generate initial data if needed
+        run: |
+          if [ ! -f "data/history.parquet" ]; then
+            echo "No history.parquet found, generating initial data..."
+            python etl/create_initial_data.py
+          else
+            echo "History data already exists, skipping initialization"
+          fi
+          
       - name: Run ETL script
         env:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
