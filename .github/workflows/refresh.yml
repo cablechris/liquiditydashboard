@@ -7,17 +7,38 @@ jobs:
   run-etl:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: pip install -r etl/requirements.txt
-      - env:
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r etl/requirements.txt
+        
+      - name: Ensure directories exist
+        run: |
+          mkdir -p data
+          mkdir -p web/public/series
+          
+      - name: Run ETL script
+        env:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
-        run: make etl
-      - run: |
+        run: |
+          echo "Running ETL script with Python $(python --version)"
+          echo "FRED_API_KEY is $(if [[ -n "$FRED_API_KEY" ]]; then echo "set"; else echo "NOT SET"; fi)"
+          python etl/fetch_data.py
+          
+      - name: Commit and push changes
+        run: |
           git config user.email "action@github.com"
-          git config user.name  "GitHub Action"
-          git add data web/public/dashboard.json || true
-          git commit -m "data $(date +'%F')" || true
-          git push || true 
+          git config user.name "GitHub Action"
+          git status
+          git add data/ web/public/ || echo "No files to add"
+          git status
+          git commit -m "data $(date +'%F')" || echo "No changes to commit"
+          git push || echo "No changes to push" 
