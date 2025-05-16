@@ -1,5 +1,11 @@
 {
-  "dependencies": {
-    "date-fns": "^4.1.0"
+  "name": "liquidity-dashboard-root",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": ["web"],
+  "scripts": {
+    "dev": "cd web && npm run dev",
+    "build": "cd web && npm run build",
+    "start": "cd web && npm run start"
   }
 }

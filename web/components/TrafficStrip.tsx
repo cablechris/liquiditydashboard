@@ -1,6 +1,6 @@
 'use client';
-import snap from '@/public/dashboard.json';
-import { fmt$ } from '@/lib/format';
+import snap from '../public/dashboard.json';
+import { fmt$ } from '../lib/format';
 
 // Define interface for the dashboard data with proper index signatures
 interface DashboardData {
