@@ -1,11 +1,11 @@
 "use client";
 
 import React from 'react';
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "../components/ui/card";
 import Light from "./TrafficLight";
 import Spark from "./Spark";
 import Bullet from "./BulletBar";
-import { fmt } from "@/lib/format";
+import { fmt } from "../lib/format";
 
 interface Props {
   title: string;
