@@ -6,6 +6,9 @@ import { fetcher } from '../../lib/fetcher';
 // Optional: Setup cron in your vercel.json to run this endpoint automatically
 // "crons": [{ "path": "/api/update-data", "schedule": "0 0 * * *" }]
 
+// For testing purposes only - Remove this in production
+const FALLBACK_FRED_API_KEY = 'cb5383ab035e688ed2b059c39a9cf0c7';
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -118,11 +121,13 @@ async function updateSeriesData(latestData: any) {
 }
 
 function createFredUrl(seriesId: string): string {
-  if (!process.env.FRED_API_KEY) {
+  // Use fallback key if environment variable is not set
+  const apiKey = process.env.FRED_API_KEY || FALLBACK_FRED_API_KEY;
+  if (!apiKey) {
     throw new Error('FRED_API_KEY environment variable is not set');
   }
   
-  return `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${process.env.FRED_API_KEY}&file_type=json&sort_order=desc&limit=1`;
+  return `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${apiKey}&file_type=json&sort_order=desc&limit=1`;
 }
 
 function parseLatestObservation(data: any): number {
