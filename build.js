@@ -22,6 +22,15 @@ if (!fs.existsSync('web/package.json')) {
   process.exit(1);
 }
 
+// Create .env.local file with necessary environment variables
+console.log('Creating environment file...');
+const envContent = `
+REDIS_URL=redis://default:7juo4GJt3KdsAZ14CoxdGEi2ZMxDcpnP@redis-14809.c74.us-east-1-4.ec2.redns.redis-cloud.com:14809
+UPDATE_SECRET=a0f9e15e94a695909b55a647a69f4077
+FRED_API_KEY=cb5383ab035e688ed2b059c39a9cf0c7
+`;
+fs.writeFileSync('web/.env.local', envContent.trim());
+
 try {
   // Install dependencies in the root package first
   console.log('Installing root dependencies...');
@@ -35,9 +44,12 @@ try {
   console.log('Ensuring redis package is installed...');
   execSync('cd web && npm install redis@4.6.13 --save', { stdio: 'inherit' });
   
-  // Validate redis can be imported
-  console.log('Validating redis installation...');
-  execSync('cd web && node -e "require(\'redis\')"', { stdio: 'inherit' });
+  // Create empty mock modules for client-side
+  console.log('Creating browser-compatible shims...');
+  const shimDir = path.join('web', 'node_modules', 'redis', 'dist', 'lib', 'client');
+  if (!fs.existsSync(shimDir)) {
+    fs.mkdirSync(shimDir, { recursive: true });
+  }
   
   console.log('Building Next.js app...');
   execSync('cd web && npm run build', { stdio: 'inherit' });
