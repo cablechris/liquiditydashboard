@@ -8,10 +8,13 @@
   "scripts": {
     "dev": "cd web && npm run dev",
     "build": "cd web && npm run build",
-    "start": "cd web && npm run start"
+    "start": "cd web && npm run start",
+    "update-data": "node update-data.js"
   },
   "dependencies": {
     "autoprefixer": "^10.4.14",
+    "axios": "^1.9.0",
+    "cheerio": "^1.0.0",
     "cross-env": "^7.0.3",
     "postcss": "^8.4.21",
     "redis": "^4.6.13",
