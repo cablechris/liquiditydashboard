@@ -1,6 +1,14 @@
-import { createClient, RedisClientType } from 'redis';
+// Define a RedisClientType interface to avoid needing the direct import
+interface RedisClientType {
+  isOpen: boolean;
+  connect(): Promise<unknown>;
+  get(key: string): Promise<string | null>;
+  set(key: string, value: string): Promise<unknown>;
+  del(key: string): Promise<unknown>;
+  on(event: string, callback: (error: Error) => void): void;
+}
 
-// Create a default KV implementation as fallback
+// Mock KV implementation as fallback
 const mockKv = {
   async get(key: string) {
     console.warn('Using mock KV implementation - Redis not available');
@@ -16,58 +24,67 @@ const mockKv = {
   }
 };
 
-// Create a Redis client with the provided URL
+// Default to mock implementation
 let redisClient: RedisClientType | null = null;
 let kv = mockKv;
 
-try {
-  redisClient = createClient({
-    url: process.env.REDIS_URL || 'redis://default:7juo4GJt3KdsAZ14CoxdGEi2ZMxDcpnP@redis-14809.c74.us-east-1-4.ec2.redns.redis-cloud.com:14809'
-  });
+// Only try to use Redis on the server side, not during build or client render
+if (typeof window === 'undefined') {
+  try {
+    // Dynamic import to avoid issues during build
+    import('redis').then((redis) => {
+      const { createClient } = redis;
+      
+      redisClient = createClient({
+        url: process.env.REDIS_URL || 'redis://default:7juo4GJt3KdsAZ14CoxdGEi2ZMxDcpnP@redis-14809.c74.us-east-1-4.ec2.redns.redis-cloud.com:14809'
+      }) as RedisClientType;
 
-  // Connect to Redis (with auto-reconnect)
-  redisClient.on('error', (err: Error) => console.error('Redis Client Error', err));
+      // Connect to Redis (with auto-reconnect)
+      redisClient.on('error', (err: Error) => console.error('Redis Client Error', err));
 
-  // Redis client wrapper with KV-like interface
-  kv = {
-    async get(key: string) {
-      try {
-        if (redisClient && !redisClient.isOpen) await redisClient.connect();
-        const value = redisClient ? await redisClient.get(key) : null;
-        return value ? JSON.parse(value) : null;
-      } catch (error) {
-        console.error('Redis get error:', error);
-        return null;
-      }
-    },
-    
-    async set(key: string, value: any) {
-      try {
-        if (redisClient && !redisClient.isOpen) await redisClient.connect();
-        if (redisClient) await redisClient.set(key, JSON.stringify(value));
-        return true;
-      } catch (error) {
-        console.error('Redis set error:', error);
-        return false;
-      }
-    },
-    
-    async del(key: string) {
-      try {
-        if (redisClient && !redisClient.isOpen) await redisClient.connect();
-        if (redisClient) await redisClient.del(key);
-        return true;
-      } catch (error) {
-        console.error('Redis del error:', error);
-        return false;
-      }
-    }
-  };
-} catch (error) {
-  console.error('Failed to initialize Redis client, using mock implementation:', error);
+      // Redis client wrapper with KV-like interface
+      kv = {
+        async get(key: string) {
+          try {
+            if (redisClient && !redisClient.isOpen) await redisClient.connect();
+            const value = redisClient ? await redisClient.get(key) : null;
+            return value ? JSON.parse(value) : null;
+          } catch (error) {
+            console.error('Redis get error:', error);
+            return null;
+          }
+        },
+        
+        async set(key: string, value: any) {
+          try {
+            if (redisClient && !redisClient.isOpen) await redisClient.connect();
+            if (redisClient) await redisClient.set(key, JSON.stringify(value));
+            return true;
+          } catch (error) {
+            console.error('Redis set error:', error);
+            return false;
+          }
+        },
+        
+        async del(key: string) {
+          try {
+            if (redisClient && !redisClient.isOpen) await redisClient.connect();
+            if (redisClient) await redisClient.del(key);
+            return true;
+          } catch (error) {
+            console.error('Redis del error:', error);
+            return false;
+          }
+        }
+      };
+    }).catch(error => {
+      console.error('Failed to import Redis module:', error);
+    });
+  } catch (error) {
+    console.error('Failed to initialize Redis client, using mock implementation:', error);
+  }
 }
 
-export { redisClient };
 export default kv;
 
 // Key names for the KV store
