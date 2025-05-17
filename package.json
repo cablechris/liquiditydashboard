@@ -11,6 +11,10 @@
     "start": "cd web && npm run start"
   },
   "dependencies": {
-    "redis": "^4.6.13"
+    "autoprefixer": "^10.4.14",
+    "cross-env": "^7.0.3",
+    "postcss": "^8.4.21",
+    "redis": "^4.6.13",
+    "tailwindcss": "^3.3.0"
   }
 }
