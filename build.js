@@ -31,14 +31,42 @@ FRED_API_KEY=cb5383ab035e688ed2b059c39a9cf0c7
 `;
 fs.writeFileSync('web/.env.local', envContent.trim());
 
-try {
-  // Install dependencies in the root package first
-  console.log('Installing root dependencies...');
-  execSync('npm install redis@4.6.13', { stdio: 'inherit' });
+// Copy directory recursively
+function copyDirRecursive(src, dest) {
+  if (!fs.existsSync(dest)) {
+    fs.mkdirSync(dest, { recursive: true });
+  }
   
-  // Run the build command in web directory
+  const entries = fs.readdirSync(src, { withFileTypes: true });
+  
+  for (const entry of entries) {
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
+    
+    if (entry.isDirectory()) {
+      copyDirRecursive(srcPath, destPath);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+    }
+  }
+}
+
+try {
+  // Install core CSS dependencies globally to ensure they're available
+  console.log('Installing core CSS dependencies globally...');
+  execSync('npm install -g autoprefixer postcss tailwindcss', { stdio: 'inherit' });
+  
+  // Install dependencies in the root package 
+  console.log('Installing root dependencies...');
+  execSync('npm install redis@4.6.13 autoprefixer postcss tailwindcss', { stdio: 'inherit' });
+  
+  // Run the build command in web directory with proper installation
   console.log('Installing web dependencies...');
   execSync('cd web && npm install --include=dev', { stdio: 'inherit' });
+  
+  // Ensure CSS processing packages are installed in web directory
+  console.log('Installing CSS dependencies in web directory...');
+  execSync('cd web && npm install --save-dev autoprefixer@^10.4.16 postcss@^8.4.32 tailwindcss@^3.4.0', { stdio: 'inherit' });
   
   // Force install redis in web directory
   console.log('Ensuring redis package is installed...');
@@ -50,6 +78,18 @@ try {
   if (!fs.existsSync(shimDir)) {
     fs.mkdirSync(shimDir, { recursive: true });
   }
+  
+  // Copy node_modules from root to web if needed
+  console.log('Ensuring all dependencies are available...');
+  const copyNeededModules = ['autoprefixer', 'postcss', 'tailwindcss'];
+  copyNeededModules.forEach(mod => {
+    const sourceDir = path.join('node_modules', mod);
+    const targetDir = path.join('web', 'node_modules', mod);
+    if (fs.existsSync(sourceDir) && !fs.existsSync(targetDir)) {
+      console.log(`Copying ${mod} from root to web...`);
+      copyDirRecursive(sourceDir, targetDir);
+    }
+  });
   
   console.log('Building Next.js app...');
   execSync('cd web && npm run build', { stdio: 'inherit' });
