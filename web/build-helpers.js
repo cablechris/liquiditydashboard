@@ -100,10 +100,10 @@ function checkPublicDataFiles() {
     if (!fs.existsSync(seriesPath)) {
       console.log(`✏️ Creating sample ${series}.json...`);
       
-      // Generate 365 days of sample data
+      // Generate 730 days (2 years) of sample data
       const data = [];
       const today = new Date();
-      for (let i = 365; i >= 0; i--) {
+      for (let i = 730; i >= 0; i--) {
         const date = new Date(today);
         date.setDate(date.getDate() - i);
         const dateStr = date.toISOString().split('T')[0];
@@ -112,28 +112,28 @@ function checkPublicDataFiles() {
         let value;
         switch (series) {
           case 'on_rrp':
-            value = Math.max(50000, 2000000 - (i * 4000));
+            value = Math.max(50000, 2000000 - (i * 2500));
             break;
           case 'reserves':
-            value = 3500000 + (Math.sin(i / 30) * 200000);
+            value = 3500000 + (Math.sin(i / 60) * 200000);
             break;
           case 'move':
-            value = 120 + (Math.sin(i / 20) * 15);
+            value = 120 + (Math.sin(i / 40) * 15);
             break;
           case 'srf':
             value = 5000 + (Math.random() * 5000);
             break;
           case 'funding':
-            value = 50 + (Math.sin(i / 25) * 10);
+            value = 50 + (Math.sin(i / 50) * 10);
             break;
           case 'bill_share':
-            value = 0.5 + (Math.sin(i / 40) * 0.1);
+            value = 0.5 + (Math.sin(i / 80) * 0.1);
             break;
           case 'tail_bp':
-            value = 2 + (Math.sin(i / 35) * 1);
+            value = 2 + (Math.sin(i / 70) * 1);
             break;
           default:
-            value = 100 + (Math.sin(i / 30) * 20);
+            value = 100 + (Math.sin(i / 60) * 20);
         }
         
         data.push({ date: dateStr, value });

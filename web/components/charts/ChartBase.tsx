@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   ResponsiveContainer, AreaChart, XAxis, YAxis,
   CartesianGrid, ReferenceLine, Tooltip, Area,
 } from 'recharts';
-import { format } from 'date-fns';
+import { format, differenceInCalendarDays } from 'date-fns';
 import { fmt$ } from '../../lib/format';
 
 type LabelPosition = 
@@ -34,16 +34,49 @@ interface ChartBaseProps {
 }
 
 export default function ChartBase({ metric, title, series, children, thresholds = [] }: ChartBaseProps) {
-  // Use the last 365 days of data by default
-  const data = series.slice(-365);
+  const totalDays = series.length;
+  const today = new Date();
+  
+  // Define time range options
+  const ranges = [
+    { label: '1 Y', days: 365 },
+    { label: '2 Y', days: 730 },
+    { label: 'Max', days: totalDays },
+  ];
+  
+  // Default to showing maximum available data
+  const [selectedRange, setSelectedRange] = useState(ranges[2]);
+  
+  // Filter data based on selected range
+  const data = useMemo(
+    () => series.slice(-Math.min(selectedRange.days, totalDays)),
+    [selectedRange.days, totalDays, series]
+  );
   
   // Fixed color for all charts
   const color = '#2962ff';
 
   return (
     <div id={`chart-${metric}`} className="mb-12">
-      {/* Chart Title */}
-      <h3 className="text-2xl font-bold mb-4">{title}</h3>
+      {/* Chart Title and Range Selector */}
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-2xl font-bold">{title}</h3>
+        <div className="flex space-x-2">
+          {ranges.map((range) => (
+            <button
+              key={range.label}
+              className={`px-2 py-1 text-xs rounded ${
+                selectedRange.label === range.label
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+              onClick={() => setSelectedRange(range)}
+            >
+              {range.label}
+            </button>
+          ))}
+        </div>
+      </div>
       
       {/* Chart */}
       <ResponsiveContainer width="100%" height={320}>
@@ -89,6 +122,7 @@ export default function ChartBase({ metric, title, series, children, thresholds 
             dataKey="date"
             tickFormatter={(date) => format(new Date(date), 'MMM yy')}
             height={40}
+            minTickGap={30}
           />
           <YAxis
             tickFormatter={v => fmt$(v)}

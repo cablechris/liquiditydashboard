@@ -57,7 +57,7 @@ try:
         hist = pd.read_parquet(hist_path)
     else:
         print(f"Creating new history file at {hist_path}")
-        # Generate test data for the past 365 days
+        # Generate test data for the past 730 days (2 years)
         dates = []
         on_rrp_values = []
         reserves_values = []
@@ -66,16 +66,16 @@ try:
         bill_share_values = []
         tail_bp_values = []
         
-        for i in range(365, -1, -1):
+        for i in range(730, -1, -1):
             d = today - timedelta(days=i)
             dates.append(d)
             # Generate some sample data with trends
-            on_rrp_values.append(2000000 - (i * 5000))  # Declining trend
-            reserves_values.append(3500000 - (i * 2000))  # Declining trend
-            move_values.append(100 + (15 * (365-i)/365))  # Rising trend
-            srf_values.append(5000 + (15000 * ((365-i)/365)**2))  # Rising exponential
-            bill_share_values.append(0.5 + (i/1000))  # Slightly increasing
-            tail_bp_values.append(2 + (i/500))  # Slightly increasing
+            on_rrp_values.append(2000000 - (i * 2500))  # Declining trend
+            reserves_values.append(3500000 - (i * 1000))  # Declining trend
+            move_values.append(100 + (15 * (730-i)/730))  # Rising trend
+            srf_values.append(5000 + (15000 * ((730-i)/730)**2))  # Rising exponential
+            bill_share_values.append(0.5 + (i/2000))  # Slightly increasing
+            tail_bp_values.append(2 + (i/1000))  # Slightly increasing
         
         # Create DataFrame
         data = {
@@ -95,8 +95,8 @@ try:
     new_row = new_row.set_index('date')
     hist = pd.concat([hist, new_row]).drop_duplicates(keep="last")
     
-    # Keep last 365 days and save
-    hist = hist.tail(365)
+    # Keep at least 730 days (2 years) of data and save
+    hist = hist.tail(730)
     hist.to_parquet(hist_path)
     print(f"Updated history saved with {len(hist)} records")
     
