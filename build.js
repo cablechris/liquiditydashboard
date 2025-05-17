@@ -51,6 +51,21 @@ function copyDirRecursive(src, dest) {
   }
 }
 
+// Update postcss.config.js to fix tailwindcss plugin issue
+console.log('Updating PostCSS configuration...');
+const postcssConfigPath = path.join('web', 'postcss.config.js');
+if (fs.existsSync(postcssConfigPath)) {
+  const fixedConfig = `
+module.exports = {
+  plugins: {
+    'tailwindcss/plugin': {},
+    autoprefixer: {},
+  },
+}
+  `.trim();
+  fs.writeFileSync(postcssConfigPath, fixedConfig);
+}
+
 try {
   // Install core CSS dependencies globally to ensure they're available
   console.log('Installing core CSS dependencies globally...');
@@ -64,9 +79,9 @@ try {
   console.log('Installing web dependencies...');
   execSync('cd web && npm install --include=dev', { stdio: 'inherit' });
   
-  // Ensure CSS processing packages are installed in web directory
-  console.log('Installing CSS dependencies in web directory...');
-  execSync('cd web && npm install --save-dev autoprefixer@^10.4.16 postcss@^8.4.32 tailwindcss@^3.4.0', { stdio: 'inherit' });
+  // Downgrade to a compatible Tailwind version
+  console.log('Installing compatible Tailwind CSS version...');
+  execSync('cd web && npm install --save-dev tailwindcss@3.3.0 postcss@8.4.21 autoprefixer@10.4.14', { stdio: 'inherit' });
   
   // Force install redis in web directory
   console.log('Ensuring redis package is installed...');
