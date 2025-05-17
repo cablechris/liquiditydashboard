@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "prebuild": "node build-helpers.js",
-    "build": "npm run prebuild && next build",
+    "build": "npm run prebuild && next build --no-lint",
     "start": "next start",
     "lint": "next lint"
   },
