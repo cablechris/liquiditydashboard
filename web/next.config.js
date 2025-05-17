@@ -5,7 +5,7 @@ const nextConfig = {
   // Output as standalone for Vercel deployment
   output: 'standalone',
   
-  // Disable TypeScript strict checking during build to avoid blocking deployments
+  // Disable TypeScript strict checking during build
   typescript: {
     ignoreBuildErrors: true,
   },
