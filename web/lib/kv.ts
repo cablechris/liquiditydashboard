@@ -36,7 +36,7 @@ if (typeof window === 'undefined') {
       const { createClient } = redis;
       
       redisClient = createClient({
-        url: process.env.REDIS_URL || 'redis://default:7juo4GJt3KdsAZ14CoxdGEi2ZMxDcpnP@redis-14809.c74.us-east-1-4.ec2.redns.redis-cloud.com:14809'
+        url: process.env.REDIS_URL || 'redis://localhost:6379'
       }) as RedisClientType;
 
       // Connect to Redis (with auto-reconnect)

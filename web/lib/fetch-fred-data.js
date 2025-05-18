@@ -7,9 +7,15 @@ const path = require('path');
 const https = require('https');
 const axios = require('axios').default;
 
-// FRED API key from environment variables or default
+// FRED API key from environment variables
 // Note: You need to register for a free API key at https://fredaccount.stlouisfed.org/
-const FRED_API_KEY = process.env.FRED_API_KEY || 'b097d5c8ab0518b60d627580f2b0582a';
+const FRED_API_KEY = process.env.FRED_API_KEY;
+
+// Check for API key
+if (!FRED_API_KEY) {
+  console.error('Error: FRED_API_KEY environment variable is not set');
+  console.error('Please set this environment variable before running');
+}
 
 // Series IDs for Federal Reserve metrics
 const SERIES = {

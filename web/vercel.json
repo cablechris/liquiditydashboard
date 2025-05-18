@@ -4,9 +4,5 @@
       "path": "/api/update-data",
       "schedule": "0 0 * * *"
     }
-  ],
-  "env": {
-    "REDIS_URL": "redis://default:7juo4GJt3KdsAZ14CoxdGEi2ZMxDcpnP@redis-14809.c74.us-east-1-4.ec2.redns.redis-cloud.com:14809",
-    "UPDATE_SECRET": "a0f9e15e94a695909b55a647a69f4077"
-  }
+  ]
 } 

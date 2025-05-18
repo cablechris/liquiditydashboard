@@ -6,8 +6,7 @@ import { fetcher } from '../../lib/fetcher';
 // Optional: Setup cron in your vercel.json to run this endpoint automatically
 // "crons": [{ "path": "/api/update-data", "schedule": "0 0 * * *" }]
 
-// For testing purposes only - Remove this in production
-const FALLBACK_FRED_API_KEY = 'cb5383ab035e688ed2b059c39a9cf0c7';
+// API key must be set as an environment variable in production
 
 export default async function handler(
   req: NextApiRequest,
@@ -121,8 +120,8 @@ async function updateSeriesData(latestData: any) {
 }
 
 function createFredUrl(seriesId: string): string {
-  // Use fallback key if environment variable is not set
-  const apiKey = process.env.FRED_API_KEY || FALLBACK_FRED_API_KEY;
+  // Only use environment variable - no fallback in production
+  const apiKey = process.env.FRED_API_KEY;
   if (!apiKey) {
     throw new Error('FRED_API_KEY environment variable is not set');
   }

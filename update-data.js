@@ -14,10 +14,16 @@
  * 8. Set working directory to this project folder
  */
 
-console.log('Starting data update process with real FRED API key...');
+console.log('Starting data update process...');
 
-// Set the FRED API key as an environment variable
-process.env.FRED_API_KEY = 'b097d5c8ab0518b60d627580f2b0582a';
+// You must set the FRED_API_KEY environment variable before running this script
+// For example: FRED_API_KEY=your_api_key node update-data.js
+if (!process.env.FRED_API_KEY) {
+  console.error('Error: FRED API key is not set!');
+  console.error('Please set the FRED_API_KEY environment variable before running this script.');
+  console.error('For example: FRED_API_KEY=your_api_key node update-data.js');
+  process.exit(1);
+}
 
 // Import the FRED data fetcher module
 const fredDataFetcher = require('./web/lib/fetch-fred-data');
