@@ -1,0 +1,37 @@
+name: Update Dashboard Data
+
+on:
+  schedule:
+    - cron: '0 3 * * *'  # Runs at 3:00 AM UTC daily
+  workflow_dispatch:      # Allows manual triggering from GitHub UI
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: |
+          cd web
+          npm install axios cheerio
+      
+      - name: Run data update
+        run: |
+          cd web
+          node lib/fetch-real-data.js
+      
+      - name: Commit updated data
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          git add web/public/series/
+          git add web/public/dashboard.json
+          git commit -m "Auto-update dashboard data [skip ci]" || echo "No changes to commit"
+          git push 
