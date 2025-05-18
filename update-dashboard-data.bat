@@ -30,4 +30,41 @@ echo ========================================= >> ..\%LOGFILE%
 echo Update finished at %date% %time% >> ..\%LOGFILE%
 echo ========================================= >> ..\%LOGFILE%
 
-echo Update finished at %date% %time% 
+echo Update finished at %date% %time%
+
+echo Starting dashboard data update process...
+echo %date% %time% > logs\update-log.txt
+
+cd web
+
+echo Updating MOVE index data...
+node lib/fetch-move-data.js >> ..\logs\update-log.txt 2>&1
+if %errorlevel% neq 0 (
+  echo Error updating MOVE index data. See logs for details. >> ..\logs\update-log.txt
+) else (
+  echo MOVE index data updated successfully. >> ..\logs\update-log.txt
+)
+
+echo Updating SRF data...
+node lib/fetch-srf-data.js >> ..\logs\update-log.txt 2>&1
+if %errorlevel% neq 0 (
+  echo Error updating SRF data. See logs for details. >> ..\logs\update-log.txt
+) else (
+  echo SRF data updated successfully. >> ..\logs\update-log.txt
+)
+
+echo Updating Treasury funding data...
+node lib/fetch-bill-share-data.js >> ..\logs\update-log.txt 2>&1
+if %errorlevel% neq 0 (
+  echo Error updating Treasury funding data. See logs for details. >> ..\logs\update-log.txt
+) else (
+  echo Treasury funding data updated successfully. >> ..\logs\update-log.txt
+)
+
+echo %date% %time% Update completed >> ..\logs\update-log.txt
+echo Dashboard data update completed.
+cd ..
+
+echo ========================================= >> %LOGFILE%
+echo Update finished at %date% %time% >> %LOGFILE%
+echo ========================================= >> %LOGFILE% 

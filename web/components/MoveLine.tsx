@@ -21,7 +21,7 @@ export default function MoveLine({ data }: MoveLineProps) {
         <ReferenceArea y1={140} y2={400} fill="#fee2e2" />
         <Line 
           type="monotone" 
-          dataKey="move" 
+          dataKey="value" 
           stroke="#4b5563" 
           strokeWidth={1.5} 
           dot={false} 

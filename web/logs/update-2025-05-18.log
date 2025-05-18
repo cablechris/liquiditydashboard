@@ -1,0 +1,327 @@
+[2025-05-18T09:43:01.914Z] Starting Liquidity Dashboard update process
+[2025-05-18T09:43:01.921Z] Running lib/data-backup.js...
+[2025-05-18T09:43:01.987Z] [lib/data-backup.js] Starting data backup process...
+[2025-05-18T09:43:01.991Z] [lib/data-backup.js] Backed up move.json to C:\Users\cable\Liquidity dashboard\web\public\series\archive\move-2025-05-18.json
+[2025-05-18T09:43:01.994Z] [lib/data-backup.js] Backed up srf.json to C:\Users\cable\Liquidity dashboard\web\public\series\archive\srf-2025-05-18.json
+[2025-05-18T09:43:02.000Z] [lib/data-backup.js] ERROR: Source file not found: C:\Users\cable\Liquidity dashboard\web\public\series\bill-share.json
+[2025-05-18T09:43:02.002Z] [lib/data-backup.js] Backed up on_rrp.json to C:\Users\cable\Liquidity dashboard\web\public\series\archive\on_rrp-2025-05-18.json
+Backed up reserves.json to C:\Users\cable\Liquidity dashboard\web\public\series\archive\reserves-2025-05-18.json
+Data backup complete
+[2025-05-18T09:43:02.003Z] [lib/data-backup.js] Backup results: {
+  'move.json': 'success',
+  'srf.json': 'success',
+  'bill-share.json': 'failed',
+  'on_rrp.json': 'success',
+  'reserves.json': 'success'
+}
+[2025-05-18T09:43:02.014Z] lib/data-backup.js completed successfully
+[2025-05-18T09:43:02.015Z] Running lib/data-backup.js clean...
+[2025-05-18T09:43:02.097Z] [lib/data-backup.js clean] ERROR: node:internal/modules/cjs/loader:1228
+  throw err;
+  ^
+
+Error: Cannot find module 'C:\Users\cable\Liquidity dashboard\web\lib\data-backup.js clean'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1225:15)
+    at Module._load (node:internal/modules/cjs/loader:1051:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:174:12)
+    at node:internal/main/run_main_module:28:49 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+[2025-05-18T09:43:02.098Z] [lib/data-backup.js clean] ERROR: Node.js v20.17.0
+[2025-05-18T09:43:02.106Z] lib/data-backup.js clean failed with exit code 1
+[2025-05-18T09:43:02.106Z] Running lib/import-historical-move-data.js...
+[2025-05-18T09:43:02.563Z] [lib/import-historical-move-data.js] Starting historical MOVE index data import...
+[2025-05-18T09:43:02.566Z] [lib/import-historical-move-data.js] Attempting to fetch historical MOVE index data...
+[2025-05-18T09:43:02.566Z] [lib/import-historical-move-data.js] Trying source: investing.com...
+[2025-05-18T09:43:04.207Z] [lib/import-historical-move-data.js] ERROR: Error fetching from investing.com: Request failed with status code 404
+[2025-05-18T09:43:04.207Z] [lib/import-historical-move-data.js] Trying source: macrotrends...
+[2025-05-18T09:43:04.470Z] [lib/import-historical-move-data.js] Trying source: ycharts...
+[2025-05-18T09:43:05.381Z] [lib/import-historical-move-data.js] ERROR: Error fetching from ycharts: Request failed with status code 404
+[2025-05-18T09:43:05.382Z] [lib/import-historical-move-data.js] Failed to fetch historical data from any source, falling back to CSV import
+[2025-05-18T09:43:05.382Z] [lib/import-historical-move-data.js] Imported 110 data points from CSV backup
+[2025-05-18T09:43:05.383Z] [lib/import-historical-move-data.js] Filtering out dates beyond 2024-05
+[2025-05-18T09:43:05.385Z] [lib/import-historical-move-data.js] Successfully imported and merged historical data: 110 historical points, 1 recent points
+[2025-05-18T09:43:05.385Z] [lib/import-historical-move-data.js] Historical data import completed successfully
+[2025-05-18T09:43:05.394Z] lib/import-historical-move-data.js completed successfully
+[2025-05-18T09:43:05.395Z] Running lib/fetch-move-data.js...
+[2025-05-18T09:43:05.763Z] [lib/fetch-move-data.js] Trying to fetch MOVE index from cnbc...
+[2025-05-18T09:43:08.247Z] [lib/fetch-move-data.js] Successfully extracted MOVE value 97 from cnbc
+[2025-05-18T09:43:08.248Z] [lib/fetch-move-data.js] Updated MOVE series data with latest value: 97 from source: cnbc
+[2025-05-18T09:43:08.248Z] [lib/fetch-move-data.js] Successfully updated MOVE data: 97
+[2025-05-18T09:43:08.267Z] lib/fetch-move-data.js completed successfully
+[2025-05-18T09:43:08.267Z] Running lib/fetch-srf-data.js...
+[2025-05-18T09:43:08.597Z] [lib/fetch-srf-data.js] Trying to fetch SRF data from nyFedOperations...
+[2025-05-18T09:43:10.092Z] [lib/fetch-srf-data.js] ERROR: Table not found using selector: table.operations-table
+[2025-05-18T09:43:10.092Z] [lib/fetch-srf-data.js] Could not extract SRF data from nyFedOperations
+Trying to fetch SRF data from nyFedSummary...
+[2025-05-18T09:43:10.560Z] [lib/fetch-srf-data.js] ERROR: Element not found using selector: .data-point:contains("Standing Repo")
+[2025-05-18T09:43:10.560Z] [lib/fetch-srf-data.js] Could not extract SRF data from nyFedSummary
+[2025-05-18T09:43:10.561Z] [lib/fetch-srf-data.js] ERROR: All sources failed to provide SRF data: No data found in nyFedOperations; No data found in nyFedSummary
+[2025-05-18T09:43:10.589Z] [lib/fetch-srf-data.js] Updated SRF series data with 1013 new records
+[2025-05-18T09:43:10.589Z] [lib/fetch-srf-data.js] Successfully updated SRF data: 0
+[2025-05-18T09:43:10.599Z] lib/fetch-srf-data.js completed successfully
+[2025-05-18T09:43:10.600Z] Running lib/fetch-bill-share-data.js...
+[2025-05-18T09:43:10.650Z] [lib/fetch-bill-share-data.js] ERROR: node:internal/modules/cjs/loader:1228
+  throw err;
+  ^
+
+Error: Cannot find module 'C:\Users\cable\Liquidity dashboard\web\lib\fetch-bill-share-data.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1225:15)
+    at Module._load (node:internal/modules/cjs/loader:1051:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:174:12)
+    at node:internal/main/run_main_module:28:49 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+
+Node.js v20.17.0
+[2025-05-18T09:43:10.656Z] lib/fetch-bill-share-data.js failed with exit code 1
+[2025-05-18T09:43:10.657Z] Running lib/cleanup-future-dates.js...
+[2025-05-18T09:43:10.795Z] [lib/cleanup-future-dates.js] Starting data cleanup process...
+[2025-05-18T09:43:11.102Z] [lib/cleanup-future-dates.js] WorldTimeAPI failed, trying alternative source
+[2025-05-18T09:43:12.961Z] [lib/cleanup-future-dates.js] Using TimeAPI date: 2025-05-18T09:43:14.1665216
+[2025-05-18T09:43:12.962Z] [lib/cleanup-future-dates.js] Using reference date: 2025-5-18
+[2025-05-18T09:43:12.963Z] [lib/cleanup-future-dates.js] Processing MOVE index data (C:\Users\cable\Liquidity dashboard\web\public\series\move.json)...
+[2025-05-18T09:43:12.964Z] [lib/cleanup-future-dates.js] Loaded 111 MOVE index data points
+[2025-05-18T09:43:12.964Z] [lib/cleanup-future-dates.js] No future-dated entries found in MOVE index data
+
+Processing SRF data (C:\Users\cable\Liquidity dashboard\web\public\series\srf.json)...
+[2025-05-18T09:43:12.966Z] [lib/cleanup-future-dates.js] Loaded 1017 SRF data points
+[2025-05-18T09:43:12.970Z] [lib/cleanup-future-dates.js] No future-dated entries found in SRF data
+
+Processing Treasury bill share data (C:\Users\cable\Liquidity dashboard\web\public\series\bill-share.json)...
+File not found: C:\Users\cable\Liquidity dashboard\web\public\series\bill-share.json - skipping
+
+Cleanup complete! Removed 0 future-dated entries in total.
+Data cleanup completed with no changes needed
+[2025-05-18T09:43:12.989Z] lib/cleanup-future-dates.js completed successfully
+[2025-05-18T09:43:12.989Z] Running lib/validate-data.js...
+[2025-05-18T09:43:13.164Z] [lib/validate-data.js] Running data validation...
+[2025-05-18T09:43:13.164Z] [lib/validate-data.js] Validating MOVE index data...
+[2025-05-18T09:43:13.165Z] [lib/validate-data.js] Found 111 MOVE data points
+[2025-05-18T09:43:13.298Z] [lib/validate-data.js] WorldTimeAPI failed, trying alternative source
+[2025-05-18T09:43:14.545Z] [lib/validate-data.js] Using TimeAPI date: 2025-05-18T09:43:15.6702319
+[2025-05-18T09:43:14.546Z] [lib/validate-data.js] Using reference date: 2025-5-18
+[2025-05-18T09:43:14.547Z] [lib/validate-data.js] MOVE index data validation passed ✓
+[2025-05-18T09:43:14.548Z] [lib/validate-data.js] Validating SRF data...
+[2025-05-18T09:43:14.548Z] [lib/validate-data.js] Found 1017 SRF data points
+[2025-05-18T09:43:14.625Z] [lib/validate-data.js] WorldTimeAPI failed, trying alternative source
+[2025-05-18T09:43:14.974Z] [lib/validate-data.js] Using TimeAPI date: 2025-05-18T09:43:16.2408976
+[2025-05-18T09:43:14.978Z] [lib/validate-data.js] SRF data validation passed ✓
+[2025-05-18T09:43:14.979Z] [lib/validate-data.js] Validating Treasury funding data...
+[2025-05-18T09:43:14.980Z] [lib/validate-data.js] ERROR: ERROR: Treasury funding data file not found
+Treasury funding data validation failed
+[2025-05-18T09:43:14.980Z] [lib/validate-data.js] ERROR: Data validation failed ✗
+[2025-05-18T09:43:14.997Z] lib/validate-data.js failed with exit code 1
+[2025-05-18T09:43:14.997Z] Dashboard update process completed successfully
+[2025-05-18T10:01:08.147Z] Starting Liquidity Dashboard update process
+[2025-05-18T10:01:08.152Z] Running lib/data-backup.js...
+[2025-05-18T10:01:08.217Z] [lib/data-backup.js] Starting data backup process...
+[2025-05-18T10:01:08.221Z] [lib/data-backup.js] Backed up move.json to C:\Users\cable\Liquidity dashboard\web\public\series\archive\move-2025-05-18.json
+[2025-05-18T10:01:08.223Z] [lib/data-backup.js] Backed up srf.json to C:\Users\cable\Liquidity dashboard\web\public\series\archive\srf-2025-05-18.json
+[2025-05-18T10:01:08.224Z] [lib/data-backup.js] ERROR: Source file not found: C:\Users\cable\Liquidity dashboard\web\public\series\bill-share.json
+[2025-05-18T10:01:08.225Z] [lib/data-backup.js] Backed up on_rrp.json to C:\Users\cable\Liquidity dashboard\web\public\series\archive\on_rrp-2025-05-18.json
+[2025-05-18T10:01:08.226Z] [lib/data-backup.js] Backed up reserves.json to C:\Users\cable\Liquidity dashboard\web\public\series\archive\reserves-2025-05-18.json
+[2025-05-18T10:01:08.227Z] [lib/data-backup.js] Data backup complete
+[2025-05-18T10:01:08.229Z] [lib/data-backup.js] Backup results: {
+  'move.json': 'success',
+  'srf.json': 'success',
+  'bill-share.json': 'failed',
+  'on_rrp.json': 'success',
+  'reserves.json': 'success'
+}
+[2025-05-18T10:01:08.243Z] lib/data-backup.js completed successfully
+[2025-05-18T10:01:08.244Z] Running lib/data-backup.js clean...
+[2025-05-18T10:01:08.298Z] [lib/data-backup.js clean] ERROR: node:internal/modules/cjs/loader:1228
+  throw err;
+  ^
+
+Error: Cannot find module 'C:\Users\cable\Liquidity dashboard\web\lib\data-backup.js clean'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1225:15)
+    at Module._load (node:internal/modules/cjs/loader:1051:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:174:12)
+    at node:internal/main/run_main_module:28:49 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+[2025-05-18T10:01:08.299Z] [lib/data-backup.js clean] ERROR: Node.js v20.17.0
+[2025-05-18T10:01:08.306Z] lib/data-backup.js clean failed with exit code 1
+[2025-05-18T10:01:08.306Z] Running lib/import-historical-move-data.js...
+[2025-05-18T10:01:08.750Z] [lib/import-historical-move-data.js] Starting historical MOVE index data import...
+[2025-05-18T10:01:08.751Z] [lib/import-historical-move-data.js] Attempting to fetch historical MOVE index data...
+[2025-05-18T10:01:08.753Z] [lib/import-historical-move-data.js] Trying source: investing.com...
+[2025-05-18T10:01:10.618Z] [lib/import-historical-move-data.js] ERROR: Error fetching from investing.com: Request failed with status code 404
+[2025-05-18T10:01:10.619Z] [lib/import-historical-move-data.js] Trying source: macrotrends...
+[2025-05-18T10:01:11.007Z] [lib/import-historical-move-data.js] Trying source: ycharts...
+[2025-05-18T10:01:12.003Z] [lib/import-historical-move-data.js] ERROR: Error fetching from ycharts: Request failed with status code 404
+[2025-05-18T10:01:12.006Z] [lib/import-historical-move-data.js] Failed to fetch historical data from any source, falling back to CSV import
+Imported 110 data points from CSV backup
+Filtering out dates beyond 2024-05
+[2025-05-18T10:01:12.007Z] [lib/import-historical-move-data.js] Successfully imported and merged historical data: 110 historical points, 1 recent points
+[2025-05-18T10:01:12.008Z] [lib/import-historical-move-data.js] Historical data import completed successfully
+[2025-05-18T10:01:12.018Z] lib/import-historical-move-data.js completed successfully
+[2025-05-18T10:01:12.018Z] Running lib/fetch-move-data.js...
+[2025-05-18T10:01:12.410Z] [lib/fetch-move-data.js] Trying to fetch MOVE index from cnbc...
+[2025-05-18T10:01:14.804Z] [lib/fetch-move-data.js] Successfully extracted MOVE value 97 from cnbc
+[2025-05-18T10:01:14.806Z] [lib/fetch-move-data.js] Updated MOVE series data with latest value: 97 from source: cnbc
+[2025-05-18T10:01:14.806Z] [lib/fetch-move-data.js] Successfully updated MOVE data: 97
+[2025-05-18T10:01:14.824Z] lib/fetch-move-data.js completed successfully
+[2025-05-18T10:01:14.825Z] Running lib/fetch-srf-data.js...
+[2025-05-18T10:01:15.151Z] [lib/fetch-srf-data.js] Trying to fetch SRF data from nyFedOperations...
+[2025-05-18T10:01:17.011Z] [lib/fetch-srf-data.js] ERROR: Table not found using selector: table.operations-table
+[2025-05-18T10:01:17.013Z] [lib/fetch-srf-data.js] Could not extract SRF data from nyFedOperations
+Trying to fetch SRF data from nyFedSummary...
+[2025-05-18T10:01:17.501Z] [lib/fetch-srf-data.js] ERROR: Element not found using selector: .data-point:contains("Standing Repo")
+[2025-05-18T10:01:17.503Z] [lib/fetch-srf-data.js] Could not extract SRF data from nyFedSummary
+[2025-05-18T10:01:17.504Z] [lib/fetch-srf-data.js] ERROR: All sources failed to provide SRF data: No data found in nyFedOperations; No data found in nyFedSummary
+[2025-05-18T10:01:17.525Z] [lib/fetch-srf-data.js] Updated SRF series data with 1013 new records
+[2025-05-18T10:01:17.525Z] [lib/fetch-srf-data.js] Successfully updated SRF data: 0
+[2025-05-18T10:01:17.537Z] lib/fetch-srf-data.js completed successfully
+[2025-05-18T10:01:17.538Z] Running lib/fetch-bill-share-data.js...
+[2025-05-18T10:01:17.896Z] [lib/fetch-bill-share-data.js] Starting Treasury bill share data update...
+[2025-05-18T10:01:17.897Z] [lib/fetch-bill-share-data.js] Attempting to fetch Treasury bill share data from official sources...
+[2025-05-18T10:01:20.031Z] [lib/fetch-bill-share-data.js] ERROR: Error fetching Treasury bill share data: Treasury data table not found
+[2025-05-18T10:01:20.032Z] [lib/fetch-bill-share-data.js] Failed to fetch real data, using generated data
+Generating realistic Treasury bill share data...
+[2025-05-18T10:01:20.042Z] [lib/fetch-bill-share-data.js] Saved 281 bill share data points to C:\Users\cable\Liquidity dashboard\web\public\series\bill-share.json
+[2025-05-18T10:01:20.043Z] [lib/fetch-bill-share-data.js] Successfully updated Treasury bill share data: 45.94%
+[2025-05-18T10:01:20.058Z] lib/fetch-bill-share-data.js completed successfully
+[2025-05-18T10:01:20.059Z] Running lib/cleanup-future-dates.js...
+[2025-05-18T10:01:20.224Z] [lib/cleanup-future-dates.js] Starting data cleanup process...
+[2025-05-18T10:01:20.504Z] [lib/cleanup-future-dates.js] WorldTimeAPI failed, trying alternative source
+[2025-05-18T10:01:22.328Z] [lib/cleanup-future-dates.js] Using TimeAPI date: 2025-05-18T10:01:23.4799153
+[2025-05-18T10:01:22.328Z] [lib/cleanup-future-dates.js] Using reference date: 2025-5-18
+[2025-05-18T10:01:22.329Z] [lib/cleanup-future-dates.js] Processing MOVE index data (C:\Users\cable\Liquidity dashboard\web\public\series\move.json)...
+[2025-05-18T10:01:22.329Z] [lib/cleanup-future-dates.js] Loaded 111 MOVE index data points
+[2025-05-18T10:01:22.330Z] [lib/cleanup-future-dates.js] No future-dated entries found in MOVE index data
+
+Processing SRF data (C:\Users\cable\Liquidity dashboard\web\public\series\srf.json)...
+[2025-05-18T10:01:22.331Z] [lib/cleanup-future-dates.js] Loaded 1017 SRF data points
+[2025-05-18T10:01:22.332Z] [lib/cleanup-future-dates.js] No future-dated entries found in SRF data
+[2025-05-18T10:01:22.332Z] [lib/cleanup-future-dates.js] Processing Treasury bill share data (C:\Users\cable\Liquidity dashboard\web\public\series\bill-share.json)...
+[2025-05-18T10:01:22.333Z] [lib/cleanup-future-dates.js] Loaded 281 Treasury bill share data points
+[2025-05-18T10:01:22.333Z] [lib/cleanup-future-dates.js] No future-dated entries found in Treasury bill share data
+
+Cleanup complete! Removed 0 future-dated entries in total.
+Data cleanup completed with no changes needed
+[2025-05-18T10:01:22.348Z] lib/cleanup-future-dates.js completed successfully
+[2025-05-18T10:01:22.348Z] Running lib/validate-data.js...
+[2025-05-18T10:01:22.486Z] [lib/validate-data.js] Running data validation...
+[2025-05-18T10:01:22.487Z] [lib/validate-data.js] Validating MOVE index data...
+[2025-05-18T10:01:22.488Z] [lib/validate-data.js] Found 111 MOVE data points
+[2025-05-18T10:01:22.598Z] [lib/validate-data.js] WorldTimeAPI failed, trying alternative source
+[2025-05-18T10:01:23.734Z] [lib/validate-data.js] Using TimeAPI date: 2025-05-18T10:01:24.9395131
+[2025-05-18T10:01:23.737Z] [lib/validate-data.js] Using reference date: 2025-5-18
+[2025-05-18T10:01:23.738Z] [lib/validate-data.js] MOVE index data validation passed ✓
+Validating SRF data...
+[2025-05-18T10:01:23.740Z] [lib/validate-data.js] Found 1017 SRF data points
+[2025-05-18T10:01:23.816Z] [lib/validate-data.js] WorldTimeAPI failed, trying alternative source
+[2025-05-18T10:01:24.192Z] [lib/validate-data.js] Using TimeAPI date: 2025-05-18T10:01:25.466033
+[2025-05-18T10:01:24.194Z] [lib/validate-data.js] SRF data validation passed ✓
+[2025-05-18T10:01:24.195Z] [lib/validate-data.js] Validating Treasury funding data...
+[2025-05-18T10:01:24.196Z] [lib/validate-data.js] Found 281 Treasury funding data points
+Treasury funding data validation passed ✓
+[2025-05-18T10:01:24.196Z] [lib/validate-data.js] All data validation passed ✓
+[2025-05-18T10:01:24.211Z] lib/validate-data.js completed successfully
+[2025-05-18T10:01:24.211Z] Dashboard update process completed successfully
+[2025-05-18T10:06:55.996Z] Starting Liquidity Dashboard update process
+[2025-05-18T10:06:56.002Z] Running lib/data-backup.js...
+[2025-05-18T10:06:56.059Z] [lib/data-backup.js] Starting data backup process...
+[2025-05-18T10:06:56.062Z] [lib/data-backup.js] Backed up move.json to C:\Users\cable\Liquidity dashboard\web\public\series\archive\move-2025-05-18.json
+[2025-05-18T10:06:56.064Z] [lib/data-backup.js] Backed up srf.json to C:\Users\cable\Liquidity dashboard\web\public\series\archive\srf-2025-05-18.json
+[2025-05-18T10:06:56.065Z] [lib/data-backup.js] Backed up bill-share.json to C:\Users\cable\Liquidity dashboard\web\public\series\archive\bill-share-2025-05-18.json
+[2025-05-18T10:06:56.066Z] [lib/data-backup.js] Backed up on_rrp.json to C:\Users\cable\Liquidity dashboard\web\public\series\archive\on_rrp-2025-05-18.json
+[2025-05-18T10:06:56.068Z] [lib/data-backup.js] Backed up reserves.json to C:\Users\cable\Liquidity dashboard\web\public\series\archive\reserves-2025-05-18.json
+[2025-05-18T10:06:56.068Z] [lib/data-backup.js] Data backup complete
+[2025-05-18T10:06:56.070Z] [lib/data-backup.js] Backup results: {
+  'move.json': 'success',
+  'srf.json': 'success',
+  'bill-share.json': 'success',
+  'on_rrp.json': 'success',
+  'reserves.json': 'success'
+}
+[2025-05-18T10:06:56.076Z] lib/data-backup.js completed successfully
+[2025-05-18T10:06:56.077Z] Running lib/data-backup.js clean...
+[2025-05-18T10:06:56.124Z] [lib/data-backup.js clean] Removing old .bak files...
+[2025-05-18T10:06:56.125Z] [lib/data-backup.js clean] Removed 0 old .bak files
+[2025-05-18T10:06:56.131Z] lib/data-backup.js clean completed successfully
+[2025-05-18T10:06:56.132Z] Running lib/import-historical-move-data.js...
+[2025-05-18T10:06:56.432Z] [lib/import-historical-move-data.js] Starting historical MOVE index data import...
+[2025-05-18T10:06:56.434Z] [lib/import-historical-move-data.js] Attempting to fetch historical MOVE index data...
+Trying source: investing.com...
+[2025-05-18T10:06:57.997Z] [lib/import-historical-move-data.js] ERROR: Error fetching from investing.com: Request failed with status code 404
+[2025-05-18T10:06:57.998Z] [lib/import-historical-move-data.js] Trying source: macrotrends...
+[2025-05-18T10:06:58.226Z] [lib/import-historical-move-data.js] Trying source: ycharts...
+[2025-05-18T10:07:00.499Z] [lib/import-historical-move-data.js] ERROR: Error fetching from ycharts: Request failed with status code 404
+[2025-05-18T10:07:00.500Z] [lib/import-historical-move-data.js] Failed to fetch historical data from any source, falling back to CSV import
+Imported 110 data points from CSV backup
+[2025-05-18T10:07:00.500Z] [lib/import-historical-move-data.js] Filtering out dates beyond 2024-05
+[2025-05-18T10:07:00.503Z] [lib/import-historical-move-data.js] Successfully imported and merged historical data: 110 historical points, 1 recent points
+[2025-05-18T10:07:00.507Z] [lib/import-historical-move-data.js] Historical data import completed successfully
+[2025-05-18T10:07:00.518Z] lib/import-historical-move-data.js completed successfully
+[2025-05-18T10:07:00.519Z] Running lib/fetch-move-data.js...
+[2025-05-18T10:07:00.895Z] [lib/fetch-move-data.js] Trying to fetch MOVE index from cnbc...
+[2025-05-18T10:07:02.911Z] [lib/fetch-move-data.js] Successfully extracted MOVE value 97 from cnbc
+[2025-05-18T10:07:02.913Z] [lib/fetch-move-data.js] Updated MOVE series data with latest value: 97 from source: cnbc
+[2025-05-18T10:07:02.913Z] [lib/fetch-move-data.js] Successfully updated MOVE data: 97
+[2025-05-18T10:07:02.930Z] lib/fetch-move-data.js completed successfully
+[2025-05-18T10:07:02.930Z] Running lib/fetch-srf-data.js...
+[2025-05-18T10:07:03.224Z] [lib/fetch-srf-data.js] Trying to fetch SRF data from nyFedOperations...
+[2025-05-18T10:07:05.109Z] [lib/fetch-srf-data.js] ERROR: Table not found using selector: table.operations-table
+[2025-05-18T10:07:05.109Z] [lib/fetch-srf-data.js] Could not extract SRF data from nyFedOperations
+Trying to fetch SRF data from nyFedSummary...
+[2025-05-18T10:07:05.587Z] [lib/fetch-srf-data.js] ERROR: Element not found using selector: .data-point:contains("Standing Repo")
+[2025-05-18T10:07:05.588Z] [lib/fetch-srf-data.js] Could not extract SRF data from nyFedSummary
+[2025-05-18T10:07:05.588Z] [lib/fetch-srf-data.js] ERROR: All sources failed to provide SRF data: No data found in nyFedOperations; No data found in nyFedSummary
+[2025-05-18T10:07:05.607Z] [lib/fetch-srf-data.js] Updated SRF series data with 1013 new records
+[2025-05-18T10:07:05.607Z] [lib/fetch-srf-data.js] Successfully updated SRF data: 0
+[2025-05-18T10:07:05.616Z] lib/fetch-srf-data.js completed successfully
+[2025-05-18T10:07:05.617Z] Running lib/fetch-bill-share-data.js...
+[2025-05-18T10:07:05.902Z] [lib/fetch-bill-share-data.js] Starting Treasury bill share data update...
+[2025-05-18T10:07:05.903Z] [lib/fetch-bill-share-data.js] Reading existing bill share data...
+[2025-05-18T10:07:05.904Z] [lib/fetch-bill-share-data.js] Attempting to fetch Treasury bill share data from official sources...
+[2025-05-18T10:07:07.926Z] [lib/fetch-bill-share-data.js] ERROR: Error fetching Treasury bill share data: Treasury data table not found
+[2025-05-18T10:07:07.929Z] [lib/fetch-bill-share-data.js] Failed to fetch real data, using generated data
+Using existing data and adding today's estimate
+[2025-05-18T10:07:07.929Z] [lib/fetch-bill-share-data.js] Saved 282 bill share data points to C:\Users\cable\Liquidity dashboard\web\public\series\bill-share.json
+[2025-05-18T10:07:07.930Z] [lib/fetch-bill-share-data.js] Successfully updated Treasury bill share data: 46.94%
+[2025-05-18T10:07:07.951Z] lib/fetch-bill-share-data.js completed successfully
+[2025-05-18T10:07:07.951Z] Running lib/cleanup-future-dates.js...
+[2025-05-18T10:07:08.136Z] [lib/cleanup-future-dates.js] Starting data cleanup process...
+[2025-05-18T10:07:08.440Z] [lib/cleanup-future-dates.js] WorldTimeAPI failed, trying alternative source
+[2025-05-18T10:07:10.220Z] [lib/cleanup-future-dates.js] Using TimeAPI date: 2025-05-18T10:07:11.4253643
+Using reference date: 2025-5-18
+
+Processing MOVE index data (C:\Users\cable\Liquidity dashboard\web\public\series\move.json)...
+Loaded 111 MOVE index data points
+No future-dated entries found in MOVE index data
+[2025-05-18T10:07:10.222Z] [lib/cleanup-future-dates.js] Processing SRF data (C:\Users\cable\Liquidity dashboard\web\public\series\srf.json)...
+Loaded 1017 SRF data points
+[2025-05-18T10:07:10.223Z] [lib/cleanup-future-dates.js] No future-dated entries found in SRF data
+
+Processing Treasury bill share data (C:\Users\cable\Liquidity dashboard\web\public\series\bill-share.json)...
+[2025-05-18T10:07:10.224Z] [lib/cleanup-future-dates.js] Loaded 282 Treasury bill share data points
+[2025-05-18T10:07:10.224Z] [lib/cleanup-future-dates.js] No future-dated entries found in Treasury bill share data
+[2025-05-18T10:07:10.225Z] [lib/cleanup-future-dates.js] Cleanup complete! Removed 0 future-dated entries in total.
+Data cleanup completed with no changes needed
+[2025-05-18T10:07:10.243Z] lib/cleanup-future-dates.js completed successfully
+[2025-05-18T10:07:10.243Z] Running lib/validate-data.js...
+[2025-05-18T10:07:10.421Z] [lib/validate-data.js] Running data validation...
+[2025-05-18T10:07:10.422Z] [lib/validate-data.js] Validating MOVE index data...
+[2025-05-18T10:07:10.423Z] [lib/validate-data.js] Found 111 MOVE data points
+[2025-05-18T10:07:10.528Z] [lib/validate-data.js] WorldTimeAPI failed, trying alternative source
+[2025-05-18T10:07:11.719Z] [lib/validate-data.js] Using TimeAPI date: 2025-05-18T10:07:12.8795753
+[2025-05-18T10:07:11.722Z] [lib/validate-data.js] Using reference date: 2025-5-18
+[2025-05-18T10:07:11.722Z] [lib/validate-data.js] MOVE index data validation passed ✓
+[2025-05-18T10:07:11.723Z] [lib/validate-data.js] Validating SRF data...
+[2025-05-18T10:07:11.724Z] [lib/validate-data.js] Found 1017 SRF data points
+[2025-05-18T10:07:11.807Z] [lib/validate-data.js] WorldTimeAPI failed, trying alternative source
+[2025-05-18T10:07:12.152Z] [lib/validate-data.js] Using TimeAPI date: 2025-05-18T10:07:13.4377174
+[2025-05-18T10:07:12.155Z] [lib/validate-data.js] SRF data validation passed ✓
+[2025-05-18T10:07:12.156Z] [lib/validate-data.js] Validating Treasury funding data...
+[2025-05-18T10:07:12.157Z] [lib/validate-data.js] Found 282 Treasury funding data points
+Treasury funding data validation passed ✓
+[2025-05-18T10:07:12.157Z] [lib/validate-data.js] All data validation passed ✓
+[2025-05-18T10:07:12.175Z] lib/validate-data.js completed successfully
+[2025-05-18T10:07:12.176Z] Dashboard update process completed successfully

@@ -19,46 +19,46 @@ jobs:
 
       - name: Install dependencies
         run: |
+          npm install
           cd web
           npm install axios cheerio fs-extra
       
-      - name: Update MOVE index data
+      - name: Ensure directories exist
         run: |
-          cd web
-          # First fetch historical data (if needed)
-          node lib/import-historical-move-data.js
-          # Then get latest data with correct scaling
-          node lib/fetch-move-data.js
-          echo "MOVE index data updated with proper scaling (40-280 range)"
+          mkdir -p web/logs
+          mkdir -p web/public/series/archive
+          echo "Created required directories"
       
-      - name: Update SRF data
+      - name: Backup existing data
         run: |
           cd web
-          node lib/fetch-srf-data.js
-          
-      - name: Update Treasury funding data
-        run: |
-          cd web
-          node lib/fetch-bill-share-data.js
+          node lib/data-backup.js
+          echo "Backed up existing data files to the archive directory"
       
-      - name: Clean up future-dated entries
+      - name: Clean up old backup files
         run: |
           cd web
-          # Use universal cleanup script with external date reference
-          node lib/cleanup-future-dates.js
-          echo "Cleaned up any future-dated entries from all data series"
+          node lib/data-backup.js clean
+          echo "Removed old .bak files"
       
-      - name: Run validation checks
+      - name: Run unified update script
         run: |
-          cd web
-          # Use validation script with external date reference
-          node lib/validate-data.js
+          node update-dashboard.js
+          echo "Completed data update process"
       
       - name: Commit updated data
         run: |
           git config --global user.name 'GitHub Action'
           git config --global user.email 'action@github.com'
-          git add web/public/series/
-          git add web/public/dashboard.json
+          
+          # Add all updated data files
+          git add web/public/series/*.json
+          
+          # Add backup files
+          git add web/public/series/archive/
+          
+          # Add logs
+          git add web/logs/
+          
           git commit -m "Auto-update dashboard data [skip ci]" || echo "No changes to commit"
           git push 
