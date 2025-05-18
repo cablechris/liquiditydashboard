@@ -20,12 +20,39 @@ jobs:
       - name: Install dependencies
         run: |
           cd web
-          npm install axios cheerio
+          npm install axios cheerio fs-extra
       
-      - name: Run data update
+      - name: Update MOVE index data
         run: |
           cd web
-          node lib/fetch-real-data.js
+          # First fetch historical data (if needed)
+          node lib/import-historical-move-data.js
+          # Then get latest data with correct scaling
+          node lib/fetch-move-data.js
+          echo "MOVE index data updated with proper scaling (40-280 range)"
+      
+      - name: Update SRF data
+        run: |
+          cd web
+          node lib/fetch-srf-data.js
+          
+      - name: Update Treasury funding data
+        run: |
+          cd web
+          node lib/fetch-bill-share-data.js
+      
+      - name: Clean up future-dated entries
+        run: |
+          cd web
+          # Use universal cleanup script with external date reference
+          node lib/cleanup-future-dates.js
+          echo "Cleaned up any future-dated entries from all data series"
+      
+      - name: Run validation checks
+        run: |
+          cd web
+          # Use validation script with external date reference
+          node lib/validate-data.js
       
       - name: Commit updated data
         run: |
