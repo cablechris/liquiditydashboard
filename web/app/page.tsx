@@ -13,23 +13,30 @@ export default function Home() {
   const [dashboardData, setDashboardData] = useState<any>(null);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  async function loadData() {
+    try {
+      setRefreshing(true);
+      const data = await getDashboardData();
+      const updated = await getLastUpdated();
+      setDashboardData(data);
+      setLastUpdated(updated);
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }
 
   useEffect(() => {
-    async function loadData() {
-      try {
-        const data = await getDashboardData();
-        const updated = await getLastUpdated() as string;
-        setDashboardData(data);
-        setLastUpdated(updated);
-      } catch (error) {
-        console.error('Error loading dashboard data:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
     loadData();
   }, []);
+
+  const handleRefresh = () => {
+    loadData();
+  };
 
   return (
     <>
@@ -41,12 +48,21 @@ export default function Home() {
               <span className="text-indigo-600">Watch the plumbing...</span>
             </h1>
             <div className="bg-gray-50 p-4 rounded-xl shadow-sm">
+              <div className="flex justify-between items-center mb-2">
+                <button 
+                  onClick={handleRefresh}
+                  disabled={refreshing}
+                  className="px-3 py-1 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-700 transition-colors disabled:bg-indigo-300 disabled:cursor-not-allowed"
+                >
+                  {refreshing ? 'Refreshing...' : 'Refresh Data'}
+                </button>
+                {lastUpdated && (
+                  <div className="text-xs text-gray-500">
+                    Last updated: {new Date(lastUpdated).toLocaleString()}
+                  </div>
+                )}
+              </div>
               <MicroDashStrip />
-              {lastUpdated && (
-                <div className="text-xs text-gray-500 mt-2 text-right">
-                  Last updated: {new Date(lastUpdated).toLocaleString()}
-                </div>
-              )}
             </div>
             <div className="max-w-3xl">
               <p className="text-lg md:text-xl text-gray-600 leading-relaxed">

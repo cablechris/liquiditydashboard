@@ -119,3 +119,43 @@ The project is configured for automatic deployment with Vercel:
 1. Connect your GitHub repository to Vercel
 2. The site will automatically build and deploy when you push changes
 3. Data will be refreshed daily through the GitHub Actions workflow
+
+## Automatic Data Updates
+
+### Manual Update
+To manually update the data from FRED:
+```
+node update-data.js
+```
+
+### Scheduled Updates (Windows)
+
+1. Open Task Scheduler
+2. Create a Basic Task
+3. Name it "Fed Dashboard Data Update"
+4. Set trigger to Daily (recommended time: 5:00 PM after market close)
+5. Set action to "Start a program"
+6. Program/script: `node`
+7. Add arguments: `update-data.js`
+8. Set working directory to this project folder
+
+### Scheduled Updates (Linux/macOS)
+
+Add a crontab entry:
+```
+0 17 * * 1-5 cd /path/to/liquidity-dashboard && node update-data.js >> /tmp/dashboard-update.log 2>&1
+```
+This runs the update every weekday at 5 PM.
+
+## Environment Variables
+
+You'll need to set up a `.env` file with:
+```
+FRED_API_KEY=your_fred_api_key
+```
+
+You can register for a free FRED API key at: https://fredaccount.stlouisfed.org/
+
+## Dynamic Data Refresh
+
+The dashboard has a "Refresh Data" button that will fetch the latest data from the local cache. For truly real-time data, the scheduled update script should be configured to run at regular intervals.

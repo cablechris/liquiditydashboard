@@ -1,16 +1,30 @@
 import kv, { KV_KEYS } from './kv';
 import { fetcher } from './fetcher';
 
+// Type definition for dashboard data
+interface DashboardData {
+  date: string;
+  lastUpdated?: string;
+  status?: {
+    on_rrp: string;
+    reserves: string;
+    move: string;
+    srf: string;
+    tail: string;
+  };
+  [key: string]: any;
+}
+
 /**
  * Fetches dashboard data, using the KV store if available,
  * falling back to static files if needed
  */
-export async function getDashboardData() {
+export async function getDashboardData(): Promise<DashboardData> {
   try {
     // Try to get data from KV store first
     const kvData = await kv.get(KV_KEYS.DASHBOARD);
     if (kvData) {
-      return kvData;
+      return kvData as DashboardData;
     }
   } catch (error) {
     console.warn('Error fetching from KV store:', error);
@@ -68,6 +82,13 @@ export async function getSparksData() {
  */
 export async function getLastUpdated() {
   try {
+    // First try to get from dashboard data which may have the latest timestamp
+    const dashboardData = await getDashboardData();
+    if (dashboardData && dashboardData.lastUpdated) {
+      return dashboardData.lastUpdated;
+    }
+    
+    // Fall back to KV store
     const lastUpdated = await kv.get(KV_KEYS.LAST_UPDATED);
     return lastUpdated;
   } catch (error) {
