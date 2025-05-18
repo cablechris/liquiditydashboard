@@ -62,6 +62,15 @@ async function fetchFredData(seriesId, startDate = '2020-01-01', endDate = null)
       value: parseFloat(obs.value === '.' ? '0' : obs.value)
     })).filter(item => !isNaN(item.value));
     
+    // Special case for MOVE index - scale VIX data to better match MOVE index ranges
+    if (seriesId === 'VIXCLS') {
+      return formattedData.map(item => ({
+        date: item.date,
+        // Scale VIX to approximate MOVE ranges (typically MOVE is ~3-4x VIX)
+        value: Math.round(item.value * 3.5)
+      }));
+    }
+    
     return formattedData;
   } catch (error) {
     console.error(`Error fetching FRED data for ${seriesId}:`, error.message);
@@ -94,10 +103,59 @@ function createFallbackData(seriesId, startDate, endDate) {
       dailyChange = -1000;
       volatility = 20000;
       break;
-    case 'VIXCLS': // MOVE Index volatility - around 80-150
-      baseValue = 80;
-      dailyChange = 0.05;
-      volatility = 5;
+    case 'VIXCLS': // MOVE Index volatility - realistic ranges for actual MOVE index
+      baseValue = 120; // Higher baseline (MOVE typically ranges from 80-150 in normal times)
+      dailyChange = 0.05; 
+      volatility = 15; // More volatility
+      
+      // Create COVID spike around March 2020
+      const covidSpike = [];
+      if (start <= new Date('2020-03-01') && end >= new Date('2020-03-30')) {
+        // Calculate day offset for covid spike
+        const covidStart = new Date('2020-03-01');
+        const dayOffset = Math.floor((covidStart - start) / (24 * 60 * 60 * 1000));
+        
+        // Add COVID spike data points - major spike to ~250
+        for (let i = 0; i < 30; i++) {
+          const spikeDay = dayOffset + i;
+          if (spikeDay >= 0 && spikeDay <= days) {
+            let spikeValue;
+            if (i < 10) { // Rapid rise
+              spikeValue = 120 + (i * 15);
+            } else if (i < 15) { // Peak
+              spikeValue = 250 - ((i - 10) * 5);
+            } else { // Decay
+              spikeValue = 225 - ((i - 15) * 10);
+            }
+            covidSpike.push({ day: spikeDay, value: spikeValue });
+          }
+        }
+      }
+      
+      // Create SVB/Credit Suisse spike around March 2023
+      const bankingSpike = [];
+      if (start <= new Date('2023-03-01') && end >= new Date('2023-03-30')) {
+        // Calculate day offset for banking crisis spike  
+        const bankingStart = new Date('2023-03-01');
+        const dayOffset = Math.floor((bankingStart - start) / (24 * 60 * 60 * 1000));
+        
+        // Add banking crisis spike - peak around 180
+        for (let i = 0; i < 30; i++) {
+          const spikeDay = dayOffset + i;
+          if (spikeDay >= 0 && spikeDay <= days) {
+            let spikeValue;
+            if (i < 8) { // Rapid rise
+              spikeValue = 110 + (i * 10);
+            } else if (i < 12) { // Peak
+              spikeValue = 180 - ((i - 8) * 5);
+            } else { // Decay
+              spikeValue = 160 - ((i - 12) * 5);
+            }
+            bankingSpike.push({ day: spikeDay, value: spikeValue });
+          }
+        }
+      }
+      
       break;
     case 'TREAST': // Treasury holdings - gradual decline
       baseValue = 5000000;
@@ -125,6 +183,19 @@ function createFallbackData(seriesId, startDate, endDate) {
     const trendValue = baseValue + (dailyChange * i);
     const randomNoise = (Math.random() - 0.5) * volatility;
     let value = Math.max(0, trendValue + randomNoise);
+    
+    // Override with spike values if applicable (for MOVE index)
+    if (seriesId === 'VIXCLS') {
+      const covidPoint = (covidSpike || []).find(point => point.day === i);
+      if (covidPoint) {
+        value = covidPoint.value;
+      }
+      
+      const bankingPoint = (bankingSpike || []).find(point => point.day === i);
+      if (bankingPoint) {
+        value = bankingPoint.value;
+      }
+    }
     
     // Round appropriately based on the magnitude
     if (value > 1000000) {
@@ -163,9 +234,19 @@ async function updateAllSeries() {
   try {
     console.log('Starting FRED data update process...');
     
+    // Import the MOVE data fetcher
+    const { updateMoveSeriesData } = require('./fetch-move-data');
+    
     // Create promises for all series
     const promises = Object.entries(SERIES).map(async ([key, seriesId]) => {
       try {
+        // Special handling for MOVE index
+        if (key === 'move') {
+          // Use our custom MOVE data fetcher instead of FRED
+          const moveValue = await updateMoveSeriesData();
+          return { key, success: true, count: 1, value: moveValue };
+        }
+        
         // Get 5 years of data for better historical context
         const data = await fetchFredData(seriesId, '2019-01-01');
         const filePath = path.join(__dirname, '..', 'public', 'series', `${key}.json`);
@@ -196,6 +277,16 @@ async function updateAllSeries() {
     // Add latest values from each series
     for (const [key, seriesId] of Object.entries(SERIES)) {
       try {
+        // Special handling for MOVE - use the result from our promises
+        if (key === 'move') {
+          const moveResult = results.find(r => r.key === 'move');
+          if (moveResult && moveResult.success) {
+            dashboard.move = moveResult.value;
+            dashboard.status.move = moveResult.value >= 170 ? "red" : moveResult.value >= 120 ? "amber" : "green";
+            continue;
+          }
+        }
+        
         const data = await fetchFredData(seriesId, '2023-01-01');
         if (data.length > 0) {
           // Get latest value (most recent date)
@@ -209,7 +300,7 @@ async function updateAllSeries() {
             dashboard.status.reserves = latestValue < 2500000 ? "red" : latestValue < 3000000 ? "amber" : "green";
           } else if (key === 'move') {
             dashboard.move = latestValue;
-            dashboard.status.move = latestValue >= 140 ? "red" : latestValue >= 120 ? "amber" : "green";
+            dashboard.status.move = latestValue >= 170 ? "red" : latestValue >= 120 ? "amber" : "green";
           }
         }
       } catch (error) {

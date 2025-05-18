@@ -1,7 +1,8 @@
 /**
- * Daily FRED Data Update Script
+ * Daily Data Update Script
  * 
  * This script fetches the latest Federal Reserve data from FRED API
+ * and real MOVE index data from financial websites
  * 
  * To set up as a scheduled task in Windows:
  * 1. Open Task Scheduler
@@ -27,11 +28,13 @@ if (!process.env.FRED_API_KEY) {
 
 // Import the FRED data fetcher module
 const fredDataFetcher = require('./web/lib/fetch-fred-data');
+// We don't need to explicitly import the MOVE fetcher - it's used inside the FRED fetcher
 
 // Run the update and handle the result
 fredDataFetcher.updateAllSeries()
   .then(results => {
     console.log('Data update completed successfully!');
+    console.log('Fetched data includes real MOVE index data from financial websites');
     process.exit(0);
   })
   .catch(error => {

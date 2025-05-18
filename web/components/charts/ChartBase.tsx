@@ -31,9 +31,19 @@ interface ChartBaseProps {
     label: string;
     position?: LabelPosition;
   }[];
+  yMin?: number;
+  yMax?: number;
 }
 
-export default function ChartBase({ metric, title, series, children, thresholds = [] }: ChartBaseProps) {
+export default function ChartBase({ 
+  metric, 
+  title, 
+  series, 
+  children, 
+  thresholds = [],
+  yMin,
+  yMax
+}: ChartBaseProps) {
   const totalDays = series.length;
   const today = new Date();
   
@@ -127,6 +137,7 @@ export default function ChartBase({ metric, title, series, children, thresholds 
           <YAxis
             tickFormatter={v => fmt$(v)}
             width={60}
+            domain={[yMin || 'auto', yMax || 'auto']}
           />
           
           {/* tooltip */}

@@ -10,9 +10,11 @@ export default function MoveChart({ meta }: { meta: any }) {
       title="MOVE Index - Treasury Volatility"
       series={series}
       thresholds={[
-        { value: 140, color: '#dc2626', label: 'Red ≥ 140', position: 'insideTopRight' },
+        { value: 170, color: '#dc2626', label: 'Red ≥ 170', position: 'insideTopRight' },
         { value: 120, color: '#eab308', label: 'Amber ≥ 120', position: 'insideTopRight' }
       ]}
+      yMax={280}
+      yMin={40}
     >
       <div className="mt-4 text-sm text-gray-600">
         <p className="mb-2">The MOVE index measures implied volatility in Treasury markets, functioning as the bond market's equivalent to the VIX. Elevated readings often precede significant market stress as they reflect uncertainty around future interest rates and monetary policy. When the MOVE index spikes above 120, it frequently signals heightened risk aversion among institutional investors and potential dislocations in funding markets.</p>
