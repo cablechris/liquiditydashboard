@@ -29,18 +29,6 @@ jobs:
           mkdir -p web/public/series/archive
           echo "Created required directories"
       
-      - name: Backup existing data
-        run: |
-          cd web
-          node lib/data-backup.js
-          echo "Backed up existing data files to the archive directory"
-      
-      - name: Clean up old backup files
-        run: |
-          cd web
-          node lib/data-backup.js clean
-          echo "Removed old .bak files"
-      
       - name: Run unified update script
         run: |
           node update-dashboard.js
@@ -50,15 +38,8 @@ jobs:
         run: |
           git config --global user.name 'GitHub Action'
           git config --global user.email 'action@github.com'
-          
-          # Add all updated data files
           git add web/public/series/*.json
-          
-          # Add backup files
           git add web/public/series/archive/
-          
-          # Add logs
           git add web/logs/
-          
           git commit -m "Auto-update dashboard data [skip ci]" || echo "No changes to commit"
           git push 
