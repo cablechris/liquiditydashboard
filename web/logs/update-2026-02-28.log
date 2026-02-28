@@ -1,0 +1,123 @@
+[2026-02-28T04:19:53.568Z] Starting Liquidity Dashboard update process
+[2026-02-28T04:19:53.569Z] Running lib/data-backup.js...
+[2026-02-28T04:19:53.599Z] [lib/data-backup.js] ERROR: node:internal/modules/cjs/loader:1031
+  throw err;
+  ^
+
+Error: Cannot find module '/home/runner/work/liquiditydashboard/liquiditydashboard/web/lib/data-backup.js'
+    at Function.Module._resolveFilename (node:internal/modules/cjs/loader:1028:15)
+    at Function.Module._load (node:internal/modules/cjs/loader:873:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)
+    at node:internal/main/run_main_module:22:47 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+[2026-02-28T04:19:53.602Z] lib/data-backup.js failed with exit code 1
+[2026-02-28T04:19:53.602Z] Running lib/data-backup.js clean...
+[2026-02-28T04:19:53.631Z] [lib/data-backup.js clean] ERROR: node:internal/modules/cjs/loader:1031
+  throw err;
+  ^
+
+Error: Cannot find module '/home/runner/work/liquiditydashboard/liquiditydashboard/web/lib/data-backup.js'
+    at Function.Module._resolveFilename (node:internal/modules/cjs/loader:1028:15)
+    at Function.Module._load (node:internal/modules/cjs/loader:873:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)
+    at node:internal/main/run_main_module:22:47 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+[2026-02-28T04:19:53.633Z] lib/data-backup.js clean failed with exit code 1
+[2026-02-28T04:19:53.633Z] Running lib/import-historical-move-data.js...
+[2026-02-28T04:19:53.662Z] [lib/import-historical-move-data.js] ERROR: node:internal/modules/cjs/loader:1031
+  throw err;
+  ^
+
+Error: Cannot find module '/home/runner/work/liquiditydashboard/liquiditydashboard/web/lib/import-historical-move-data.js'
+    at Function.Module._resolveFilename (node:internal/modules/cjs/loader:1028:15)
+    at Function.Module._load (node:internal/modules/cjs/loader:873:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)
+    at node:internal/main/run_main_module:22:47 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+[2026-02-28T04:19:53.664Z] lib/import-historical-move-data.js failed with exit code 1
+[2026-02-28T04:19:53.665Z] Running lib/fetch-move-data.js...
+[2026-02-28T04:19:53.693Z] [lib/fetch-move-data.js] ERROR: node:internal/modules/cjs/loader:1031
+  throw err;
+  ^
+
+Error: Cannot find module '/home/runner/work/liquiditydashboard/liquiditydashboard/web/lib/fetch-move-data.js'
+    at Function.Module._resolveFilename (node:internal/modules/cjs/loader:1028:15)
+    at Function.Module._load (node:internal/modules/cjs/loader:873:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)
+    at node:internal/main/run_main_module:22:47 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+[2026-02-28T04:19:53.696Z] lib/fetch-move-data.js failed with exit code 1
+[2026-02-28T04:19:53.696Z] Running lib/fetch-srf-data.js...
+[2026-02-28T04:19:53.725Z] [lib/fetch-srf-data.js] ERROR: node:internal/modules/cjs/loader:1031
+  throw err;
+  ^
+
+Error: Cannot find module '/home/runner/work/liquiditydashboard/liquiditydashboard/web/lib/fetch-srf-data.js'
+    at Function.Module._resolveFilename (node:internal/modules/cjs/loader:1028:15)
+    at Function.Module._load (node:internal/modules/cjs/loader:873:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)
+    at node:internal/main/run_main_module:22:47 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+[2026-02-28T04:19:53.727Z] lib/fetch-srf-data.js failed with exit code 1
+[2026-02-28T04:19:53.727Z] Running lib/fetch-bill-share-data.js...
+[2026-02-28T04:19:53.756Z] [lib/fetch-bill-share-data.js] ERROR: node:internal/modules/cjs/loader:1031
+  throw err;
+  ^
+
+Error: Cannot find module '/home/runner/work/liquiditydashboard/liquiditydashboard/web/lib/fetch-bill-share-data.js'
+    at Function.Module._resolveFilename (node:internal/modules/cjs/loader:1028:15)
+    at Function.Module._load (node:internal/modules/cjs/loader:873:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)
+    at node:internal/main/run_main_module:22:47 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+[2026-02-28T04:19:53.758Z] lib/fetch-bill-share-data.js failed with exit code 1
+[2026-02-28T04:19:53.758Z] Running lib/cleanup-future-dates.js...
+[2026-02-28T04:19:53.842Z] [lib/cleanup-future-dates.js] Starting data cleanup process...
+[2026-02-28T04:19:53.978Z] [lib/cleanup-future-dates.js] WorldTimeAPI failed, trying alternative source
+[2026-02-28T04:19:54.577Z] [lib/cleanup-future-dates.js] Using TimeAPI date: 2026-02-28T04:19:54.2486639
+[2026-02-28T04:19:54.577Z] [lib/cleanup-future-dates.js] Using reference date: 2026-2-28
+
+Processing MOVE index data (/home/runner/work/liquiditydashboard/liquiditydashboard/web/public/series/move.json)...
+[2026-02-28T04:19:54.578Z] [lib/cleanup-future-dates.js] Loaded 111 MOVE index data points
+[2026-02-28T04:19:54.578Z] [lib/cleanup-future-dates.js] No future-dated entries found in MOVE index data
+
+Processing SRF data (/home/runner/work/liquiditydashboard/liquiditydashboard/web/public/series/srf.json)...
+[2026-02-28T04:19:54.579Z] [lib/cleanup-future-dates.js] Loaded 1017 SRF data points
+[2026-02-28T04:19:54.580Z] [lib/cleanup-future-dates.js] No future-dated entries found in SRF data
+[2026-02-28T04:19:54.580Z] [lib/cleanup-future-dates.js] Processing Treasury bill share data (/home/runner/work/liquiditydashboard/liquiditydashboard/web/public/series/bill-share.json)...
+[2026-02-28T04:19:54.580Z] [lib/cleanup-future-dates.js] Loaded 282 Treasury bill share data points
+[2026-02-28T04:19:54.581Z] [lib/cleanup-future-dates.js] No future-dated entries found in Treasury bill share data
+[2026-02-28T04:19:54.581Z] [lib/cleanup-future-dates.js] Cleanup complete! Removed 0 future-dated entries in total.
+Data cleanup completed with no changes needed
+[2026-02-28T04:19:54.585Z] lib/cleanup-future-dates.js completed successfully
+[2026-02-28T04:19:54.585Z] Running lib/validate-data.js...
+[2026-02-28T04:19:54.663Z] [lib/validate-data.js] Running data validation...
+[2026-02-28T04:19:54.664Z] [lib/validate-data.js] Validating MOVE index data...
+[2026-02-28T04:19:54.664Z] [lib/validate-data.js] Found 111 MOVE data points
+[2026-02-28T04:19:54.747Z] [lib/validate-data.js] WorldTimeAPI failed, trying alternative source
+[2026-02-28T04:19:55.185Z] [lib/validate-data.js] Using TimeAPI date: 2026-02-28T04:19:54.8562995
+[2026-02-28T04:19:55.185Z] [lib/validate-data.js] Using reference date: 2026-2-28
+[2026-02-28T04:19:55.186Z] [lib/validate-data.js] MOVE index data validation passed ✓
+[2026-02-28T04:19:55.186Z] [lib/validate-data.js] Validating SRF data...
+[2026-02-28T04:19:55.187Z] [lib/validate-data.js] Found 1017 SRF data points
+[2026-02-28T04:19:55.282Z] [lib/validate-data.js] WorldTimeAPI failed, trying alternative source
+[2026-02-28T04:19:55.712Z] [lib/validate-data.js] Using TimeAPI date: 2026-02-28T04:19:55.3882011
+[2026-02-28T04:19:55.714Z] [lib/validate-data.js] SRF data validation passed ✓
+[2026-02-28T04:19:55.714Z] [lib/validate-data.js] Validating Treasury funding data...
+[2026-02-28T04:19:55.714Z] [lib/validate-data.js] Found 282 Treasury funding data points
+[2026-02-28T04:19:55.714Z] [lib/validate-data.js] Treasury funding data validation passed ✓
+[2026-02-28T04:19:55.714Z] [lib/validate-data.js] All data validation passed ✓
+[2026-02-28T04:19:55.718Z] lib/validate-data.js completed successfully
+[2026-02-28T04:19:55.718Z] Dashboard update process completed successfully
